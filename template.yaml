@@ -1,0 +1,45 @@
+Transform: AWS::Serverless-2016-10-31
+
+Globals:
+    Function:
+        Runtime: python3.8
+        Timeout: 180
+Resources:
+    NewGameFunction:
+        Type: AWS::Serverless::Function
+        Properties:
+            Runtime: python3.8
+            CodeUri: mafia/
+            Handler: mafiaNewGame.lambda_handler
+            Events:
+                NewGame:
+                    Type: Api 
+                    Properties:
+                        Path: /newgame
+                        Method: get
+    AddPlayerFunction:
+        Type: AWS::Serverless::Function
+        Properties:
+            Runtime: python3.8
+            CodeUri: mafia/
+            Handler: mafiaAddPlayer.lambda_handler
+            Events:
+                NewGame:
+                    Type: Api 
+                    Properties:
+                        Path: /addPlayer
+                        Method: get
+    GameStateTable:
+        Type: AWS::Serverless::SimpleTable
+        Properties:
+            PrimaryKey: 
+                Name: _id
+                Type: String
+            TableName: gameState
+    PlayerTable:
+        Type: AWS::Serverless::SimpleTable
+        Properties:
+            PrimaryKey: 
+                Name: _id
+                Type: String
+            TableName: players

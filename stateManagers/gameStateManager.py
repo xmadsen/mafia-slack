@@ -1,5 +1,5 @@
 from models.gameState import Constants as PossibleStates
-class Actions(object):
+class Actions:
     START_GAME = 'START_GAME'
     ACCUSE = 'ACCUSE'
     MURDER = 'MURDER'

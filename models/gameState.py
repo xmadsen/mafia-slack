@@ -1,5 +1,5 @@
 
-class Constants(object):
+class Constants:
     MARSHALLING = 'MARSHALLING'
     NIGHT = 'NIGHT'
     DAY = 'DAY'

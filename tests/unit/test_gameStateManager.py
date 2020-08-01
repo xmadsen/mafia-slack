@@ -2,14 +2,24 @@ import pytest
 from models.gameState import State, Constants
 from stateManagers.gameStateManager import GameStateManager, Actions
 
-def test_GameStateMarshalling_GameStartAction_StateIsNight():
+def test_GameStateMarshallingWithEnoughPlayers_GameStartAction_StateIsNight():
+    state = State()
+    state.state = Constants.MARSHALLING
+    state.players = [1,2,3]
+    systemUnderTest = GameStateManager(state)
+
+    systemUnderTest.transition(Actions.START_GAME)
+
+    assert state.state == Constants.NIGHT
+
+def test_GameStateMarshallingWithoutEnoughPlayers_GameStartAction_StateIsMarshalling():
     state = State()
     state.state = Constants.MARSHALLING
     systemUnderTest = GameStateManager(state)
 
     systemUnderTest.transition(Actions.START_GAME)
 
-    assert state.state == Constants.NIGHT
+    assert state.state == Constants.MARSHALLING
 
 def test_GameStateNight_MurderAction_StateIsDay():
     state = State()

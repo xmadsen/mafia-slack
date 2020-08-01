@@ -22,7 +22,8 @@ class GameStateManager(object):
             self.transitionFromTrial(action)
     
     def transitionFromMarshalling(self, action):
-        self.gameState.state = PossibleStates.NIGHT
+        if len(self.gameState.players) >= 3:
+            self.gameState.state = PossibleStates.NIGHT
 
     def transitionFromNight(self, action):
         self.gameState.state = PossibleStates.DAY

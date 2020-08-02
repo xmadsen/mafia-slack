@@ -1,12 +1,12 @@
 import pytest
-from models.gameState import State, Constants
+from models.gameState import Game, States
 from stateManagers.gameStateManager import GameStateManager, Actions
 
 def test_GameStateDay_AccuseAction_StateIsTrial():
-    state = State()
-    state.state = Constants.DAY
+    state = Game()
+    state.state = States.DAY
     systemUnderTest = GameStateManager(state)
 
     systemUnderTest.transition(Actions.ACCUSE)
 
-    assert state.state == Constants.TRIAL
+    assert state.state == States.TRIAL

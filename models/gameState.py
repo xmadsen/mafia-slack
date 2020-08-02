@@ -1,11 +1,12 @@
 
-class Constants:
+class States:
     MARSHALLING = 'MARSHALLING'
     NIGHT = 'NIGHT'
     DAY = 'DAY'
     TRIAL = 'TRIAL'
+    GAME_OVER = 'GAME_OVER'
 
-class State(object):
+class Game(object):
     def __init__(self):
-        self.state = Constants.MARSHALLING
+        self.state = States.MARSHALLING
         self.players = []

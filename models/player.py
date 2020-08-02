@@ -4,7 +4,12 @@ class Roles:
     VILLAGER = 'VILLAGER'
     MAFIA = 'MAFIA'
 
+class States:
+    ALIVE = 'ALIVE'
+    DEAD = 'DEAD'
+
 class Player(object):
     def __init__(self):
         self.role = Roles.NONE
-        self.state = 'ALIVE'
+        self.state = States.ALIVE
+        self.id = None

@@ -1,6 +1,6 @@
 import random
-from models.gameState import Constants as PossibleStates
-from models.player import Roles
+from models.gameState import States as PossibleStates
+from models.player import Roles, States as PlayerStates
 class Actions:
     START_GAME = 'START_GAME'
     ACCUSE = 'ACCUSE'
@@ -20,7 +20,7 @@ class GameStateManager(object):
         if self.gameState.state == PossibleStates.MARSHALLING:
             self.transitionFromMarshalling(action, data)
         elif self.gameState.state == PossibleStates.NIGHT:
-            self.transitionFromNight(action)
+            self.transitionFromNight(action, data)
         elif self.gameState.state == PossibleStates.DAY:
             self.transitionFromDay(action)
         elif self.gameState.state == PossibleStates.TRIAL:
@@ -37,8 +37,16 @@ class GameStateManager(object):
             toRemove = [p for p in self.gameState.players if p.id == data][0]
             self.gameState.players.remove(toRemove)
 
-    def transitionFromNight(self, action):
-        self.gameState.state = PossibleStates.DAY
+    def transitionFromNight(self, action, data):
+        if action == Actions.MURDER:
+            toMurder = [p for p in self.gameState.players if p.id == data][0]
+            toMurder.state = PlayerStates.DEAD
+            mafiaCount = len([p for p in self.gameState.players if p.role == Roles.MAFIA and p.state == PlayerStates.ALIVE])
+            villagerCount = len([p for p in self.gameState.players if p.role == Roles.VILLAGER and p.state == PlayerStates.ALIVE])
+            if villagerCount == mafiaCount:
+                self.gameState.state = PossibleStates.GAME_OVER
+            else:
+                self.gameState.state = PossibleStates.DAY
 
     def transitionFromDay(self, action):
         self.gameState.state = PossibleStates.TRIAL

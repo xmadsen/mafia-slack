@@ -1,3 +1,4 @@
+import random
 from models.gameState import Constants as PossibleStates
 class Actions:
     START_GAME = 'START_GAME'
@@ -23,6 +24,7 @@ class GameStateManager(object):
     
     def transitionFromMarshalling(self, action):
         if len(self.gameState.players) >= 3:
+            self.assignPlayerRoles()
             self.gameState.state = PossibleStates.NIGHT
 
     def transitionFromNight(self, action):
@@ -36,3 +38,14 @@ class GameStateManager(object):
             self.gameState.state = PossibleStates.DAY
         elif action == Actions.GUILTY:
             self.gameState.state = PossibleStates.NIGHT
+
+    def assignPlayerRoles(self):
+        numMafia = self.getMafiaCount()
+        shuffledRoster = random.sample(self.gameState.players,len(self.gameState.players))
+        for idx in range(numMafia):
+            shuffledRoster.pop().role = 'MAFIA'
+        for p in shuffledRoster:
+            p.role = 'VILLAGER'
+    
+    def getMafiaCount(self):
+        return len(self.gameState.players) // 3

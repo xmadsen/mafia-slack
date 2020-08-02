@@ -36,3 +36,27 @@ def test_GameStateMarshallingWithoutEnoughPlayers_GameStartAction_PlayersAssigne
 
     assert len([p for p in state.players if p.role == Roles.MAFIA]) == expected_mafia
     assert len([p for p in state.players if p.role == Roles.VILLAGER]) == expected_villagers
+
+def test_GameStateMarshalling_AddPlayerAction_PlayerAdded():
+    state = State()
+    state.state = Constants.MARSHALLING
+    systemUnderTest = GameStateManager(state)
+    player = Player()
+
+    systemUnderTest.transition(Actions.ADD_PLAYER, player)
+
+    assert player in state.players
+
+def test_GameStateMarshalling_RemovePlayerAction_PlayerRemoved():
+    state = State()
+    state.state = Constants.MARSHALLING
+    systemUnderTest = GameStateManager(state)
+    player = Player()
+    player.id = 'test'
+    state.players = [player]
+
+    systemUnderTest.transition(Actions.REMOVE_PLAYER, player.id)
+
+    assert player not in state.players
+
+#TODO add non happy path tests

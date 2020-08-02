@@ -1,5 +1,6 @@
 import random
 from models.gameState import Constants as PossibleStates
+from models.player import Roles
 class Actions:
     START_GAME = 'START_GAME'
     ACCUSE = 'ACCUSE'
@@ -42,10 +43,10 @@ class GameStateManager(object):
     def assignPlayerRoles(self):
         numMafia = self.getMafiaCount()
         shuffledRoster = random.sample(self.gameState.players,len(self.gameState.players))
-        for idx in range(numMafia):
-            shuffledRoster.pop().role = 'MAFIA'
-        for p in shuffledRoster:
-            p.role = 'VILLAGER'
+        for p in shuffledRoster[:numMafia]:
+            p.role = Roles.MAFIA
+        for p in shuffledRoster[numMafia:]:
+            p.role = Roles.VILLAGER
     
     def getMafiaCount(self):
         return len(self.gameState.players) // 3

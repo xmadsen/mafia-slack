@@ -3,6 +3,7 @@ import random
 from models.gameState import Game, States as GameStates
 from models.player import Player, Roles
 from stateManagers.gameStateManager import GameStateManager, Actions
+from tests.unit.testHelpers import createVillager
 
 def test_GameStateMarshallingWithEnoughPlayers_GameStartAction_StateIsNight():
     state = Game()
@@ -51,8 +52,7 @@ def test_GameStateMarshalling_RemovePlayerAction_PlayerRemoved():
     state = Game()
     state.state = GameStates.MARSHALLING
     systemUnderTest = GameStateManager(state)
-    player = Player()
-    player.id = 'test'
+    player = createVillager('test')
     state.players = [player]
 
     systemUnderTest.transition(Actions.REMOVE_PLAYER, player.id)

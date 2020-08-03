@@ -2,13 +2,13 @@ import pytest
 from models.gameState import Game, States as GameStates
 from models.player import Player, States as PlayerStates
 from stateManagers.gameStateManager import GameStateManager, Actions
+from tests.unit.testHelpers import createVillager
 
 def test_GameStateDay_AccuseAction_StateIsTrialPlayerIsOnTrial():
     state = Game()
     state.state = GameStates.DAY
     systemUnderTest = GameStateManager(state)
-    player = Player()
-    player.id = 'test'
+    player = createVillager('test')
     state.players = [player]
 
     systemUnderTest.transition(Actions.ACCUSE, player.id)

@@ -9,8 +9,7 @@ def test_GameStateTrial_FoundNotGuiltyAction_StateIsDayPlayerOnTrialIsAlive():
     state = Game()
     state.state = GameStates.TRIAL
     systemUnderTest = GameStateManager(state)
-    player = createVillager()
-    player.id = 'test'
+    player = createVillager('test')
     player.state = PlayerStates.ON_TRIAL
     state.players = [player]
 
@@ -23,8 +22,7 @@ def test_GameStateTrial_FoundGuiltyAction_StateIsNightPlayerOnTrialIsDead():
     state = Game()
     state.state = GameStates.TRIAL
     systemUnderTest = GameStateManager(state)
-    player = createVillager()
-    player.id = 'test'
+    player = createVillager('test')
     player.state = PlayerStates.ON_TRIAL
     state.players = [player, createVillager(), createVillager() ,createMafia()]
 
@@ -37,9 +35,7 @@ def test_GameStateTrial_LastMafiaMemberFoundGuilty_StateIsGameOver():
     state = Game()
     state.state = GameStates.TRIAL
     systemUnderTest = GameStateManager(state)
-    player = createVillager()
-    player.id = 'test'
-    player.role = Roles.MAFIA
+    player = createMafia('test')
     player.state = PlayerStates.ON_TRIAL
     state.players = [player]
 

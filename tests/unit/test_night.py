@@ -2,6 +2,7 @@ import pytest
 from models.gameState import Game, States as GameStates
 from models.player import Player, Roles, States as PlayerStates
 from stateManagers.gameStateManager import GameStateManager, Actions
+from tests.unit.testHelpers import createMafia, createVillager
 
 def test_GameStateNight_MurderAction_StateIsDayPlayerDead():
     player = Player()
@@ -28,15 +29,3 @@ def test_GameStateNight_MurderResultsInVillagerCountEqualingMafia_StateIsGameOve
 
     assert state.state == GameStates.GAME_OVER
     assert player.state == PlayerStates.DEAD
-
-def createVillager():
-    player = Player()
-    player.state = PlayerStates.ALIVE
-    player.role = Roles.VILLAGER
-    return player
-
-def createMafia():
-    player = Player()
-    player.state = PlayerStates.ALIVE
-    player.role = Roles.MAFIA
-    return player

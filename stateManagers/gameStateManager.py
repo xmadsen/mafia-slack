@@ -1,6 +1,7 @@
 import random
-from models.gameState import States as PossibleStates
+from models.gameState import States as GameStates
 from models.player import Roles, States as PlayerStates
+
 class Actions:
     START_GAME = 'START_GAME'
     ACCUSE = 'ACCUSE'
@@ -17,20 +18,20 @@ class GameStateManager(object):
         self.gameState = gameState
 
     def transition(self, action, data=None):
-        if self.gameState.state == PossibleStates.MARSHALLING:
+        if self.gameState.state == GameStates.MARSHALLING:
             self.transitionFromMarshalling(action, data)
-        elif self.gameState.state == PossibleStates.NIGHT:
+        elif self.gameState.state == GameStates.NIGHT:
             self.transitionFromNight(action, data)
-        elif self.gameState.state == PossibleStates.DAY:
+        elif self.gameState.state == GameStates.DAY:
             self.transitionFromDay(action, data)
-        elif self.gameState.state == PossibleStates.TRIAL:
+        elif self.gameState.state == GameStates.TRIAL:
             self.transitionFromTrial(action)
     
     def transitionFromMarshalling(self, action, data):
         if action == Actions.START_GAME:
             if len(self.gameState.players) >= 3:
                 self.assignPlayerRoles()
-                self.gameState.state = PossibleStates.NIGHT
+                self.gameState.state = GameStates.NIGHT
         elif action == Actions.ADD_PLAYER:
             self.gameState.players.append(data)
         elif action == Actions.REMOVE_PLAYER:
@@ -41,24 +42,28 @@ class GameStateManager(object):
         if action == Actions.MURDER:
             toMurder = self.findPlayerWithId(data)
             toMurder.state = PlayerStates.DEAD
-            mafiaCount = len([p for p in self.gameState.players if p.role == Roles.MAFIA and p.state == PlayerStates.ALIVE])
-            villagerCount = len([p for p in self.gameState.players if p.role == Roles.VILLAGER and p.state == PlayerStates.ALIVE])
-            if villagerCount == mafiaCount:
-                self.gameState.state = PossibleStates.GAME_OVER
+            if self.isGameOver():
+                self.gameState.state = GameStates.GAME_OVER
             else:
-                self.gameState.state = PossibleStates.DAY
+                self.gameState.state = GameStates.DAY
 
     def transitionFromDay(self, action, data):
         if action == Actions.ACCUSE:
             accusedPlayer = self.findPlayerWithId(data)
             accusedPlayer.state = PlayerStates.ON_TRIAL
-            self.gameState.state = PossibleStates.TRIAL
+            self.gameState.state = GameStates.TRIAL
 
     def transitionFromTrial(self, action):
+        player = self.findPlayersWithState(PlayerStates.ON_TRIAL)[0]
         if action == Actions.NOT_GUILTY:
-            self.gameState.state = PossibleStates.DAY
+            player.state = PlayerStates.ALIVE
+            self.gameState.state = GameStates.DAY
         elif action == Actions.GUILTY:
-            self.gameState.state = PossibleStates.NIGHT
+            player.state = PlayerStates.DEAD
+            if self.isGameOver():
+                self.gameState.state = GameStates.GAME_OVER
+            else:
+                self.gameState.state = GameStates.NIGHT
 
     def assignPlayerRoles(self):
         numMafia = self.getMafiaCount()
@@ -73,3 +78,12 @@ class GameStateManager(object):
 
     def findPlayerWithId(self, id):
         return [p for p in self.gameState.players if p.id == id][0]
+    
+    def findPlayersWithState(self, state):
+        return [p for p in self.gameState.players if p.state == state]
+
+    def isGameOver(self):
+        mafiaCount = len([p for p in self.gameState.players if p.role == Roles.MAFIA and p.state == PlayerStates.ALIVE])
+        villagerCount = len([p for p in self.gameState.players if p.role == Roles.VILLAGER and p.state == PlayerStates.ALIVE])
+        
+        return mafiaCount == 0 or villagerCount == mafiaCount

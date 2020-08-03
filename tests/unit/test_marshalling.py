@@ -8,7 +8,7 @@ from tests.unit.testHelpers import createVillager
 def test_GameStateMarshallingWithEnoughPlayers_GameStartAction_StateIsNight():
     state = Game()
     state.state = GameStates.MARSHALLING
-    state.players = [Player(), Player(), Player()]
+    state.players = [Player(), Player(), Player(), Player()]
     systemUnderTest = GameStateManager(state)
 
     systemUnderTest.transition(Actions.START_GAME)
@@ -18,14 +18,15 @@ def test_GameStateMarshallingWithEnoughPlayers_GameStartAction_StateIsNight():
 def test_GameStateMarshallingWithoutEnoughPlayers_GameStartAction_StateIsMarshalling():
     state = Game()
     state.state = GameStates.MARSHALLING
+    state.players = [Player(),Player(),Player()]
     systemUnderTest = GameStateManager(state)
 
     systemUnderTest.transition(Actions.START_GAME)
 
     assert state.state == GameStates.MARSHALLING
 
-def test_GameStateMarshallingWithoutEnoughPlayers_GameStartAction_PlayersAssignedRoles():
-    num_players = random.randint(3,10)
+def test_GameStateMarshallingWithEnoughPlayers_GameStartAction_PlayersAssignedRoles():
+    num_players = random.randint(4,10)
     expected_mafia = num_players//3
     expected_villagers = num_players - expected_mafia
     state = Game()

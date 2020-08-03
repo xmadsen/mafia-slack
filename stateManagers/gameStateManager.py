@@ -29,7 +29,7 @@ class GameStateManager(object):
     
     def _transitionFromMarshalling(self, action, data):
         if action == Actions.START_GAME:
-            if len(self.gameState.players) >= 3:
+            if len(self.gameState.players) >= 4:
                 self._assignPlayerRoles()
                 self.gameState.state = GameStates.NIGHT
         elif action == Actions.ADD_PLAYER:

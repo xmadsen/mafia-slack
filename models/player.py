@@ -7,6 +7,7 @@ class Roles:
 class States:
     ALIVE = 'ALIVE'
     DEAD = 'DEAD'
+    ON_TRIAL = 'ON_TRIAL'
 
 class Player(object):
     def __init__(self):

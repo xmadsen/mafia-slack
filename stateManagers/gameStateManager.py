@@ -22,7 +22,7 @@ class GameStateManager(object):
         elif self.gameState.state == PossibleStates.NIGHT:
             self.transitionFromNight(action, data)
         elif self.gameState.state == PossibleStates.DAY:
-            self.transitionFromDay(action)
+            self.transitionFromDay(action, data)
         elif self.gameState.state == PossibleStates.TRIAL:
             self.transitionFromTrial(action)
     
@@ -34,12 +34,12 @@ class GameStateManager(object):
         elif action == Actions.ADD_PLAYER:
             self.gameState.players.append(data)
         elif action == Actions.REMOVE_PLAYER:
-            toRemove = [p for p in self.gameState.players if p.id == data][0]
+            toRemove = self.findPlayerWithId(data)
             self.gameState.players.remove(toRemove)
 
     def transitionFromNight(self, action, data):
         if action == Actions.MURDER:
-            toMurder = [p for p in self.gameState.players if p.id == data][0]
+            toMurder = self.findPlayerWithId(data)
             toMurder.state = PlayerStates.DEAD
             mafiaCount = len([p for p in self.gameState.players if p.role == Roles.MAFIA and p.state == PlayerStates.ALIVE])
             villagerCount = len([p for p in self.gameState.players if p.role == Roles.VILLAGER and p.state == PlayerStates.ALIVE])
@@ -48,8 +48,11 @@ class GameStateManager(object):
             else:
                 self.gameState.state = PossibleStates.DAY
 
-    def transitionFromDay(self, action):
-        self.gameState.state = PossibleStates.TRIAL
+    def transitionFromDay(self, action, data):
+        if action == Actions.ACCUSE:
+            accusedPlayer = self.findPlayerWithId(data)
+            accusedPlayer.state = PlayerStates.ON_TRIAL
+            self.gameState.state = PossibleStates.TRIAL
 
     def transitionFromTrial(self, action):
         if action == Actions.NOT_GUILTY:
@@ -67,3 +70,6 @@ class GameStateManager(object):
     
     def getMafiaCount(self):
         return len(self.gameState.players) // 3
+
+    def findPlayerWithId(self, id):
+        return [p for p in self.gameState.players if p.id == id][0]

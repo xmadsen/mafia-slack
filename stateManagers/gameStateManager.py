@@ -87,3 +87,11 @@ class GameStateManager(object):
         villagerCount = len([p for p in self.gameState.players if p.role == Roles.VILLAGER and p.state == PlayerStates.ALIVE])
         
         return mafiaCount == 0 or villagerCount == mafiaCount
+
+    def printGameState(self):
+        playerList = sorted(self.gameState.players,key=lambda player: player.role)
+        print('ROSTER:')
+        print('id|role|state')
+        for p in playerList:
+            print(p)
+        print(f'GAME STATE: {self.gameState.state}')

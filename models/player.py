@@ -14,3 +14,5 @@ class Player(object):
         self.role = Roles.NONE
         self.state = States.ALIVE
         self.id = None
+    def __str__(self):
+        return f'{self.id}\t{self.role}\t{self.state}'

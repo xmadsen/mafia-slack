@@ -1,5 +1,5 @@
 import json
-from dataRepos import GameStateRepo
+from data_access.dataRepos import GameStateRepo
 
 def new_game(gameId):
     repo = GameStateRepo()

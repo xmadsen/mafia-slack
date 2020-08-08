@@ -7,6 +7,7 @@ class States:
     GAME_OVER = 'GAME_OVER'
 
 class Game(object):
-    def __init__(self):
+    def __init__(self, id = None):
+        self.id = id
         self.state = States.MARSHALLING
         self.players = []

@@ -1,5 +1,5 @@
 
-from models.player import Player, Roles, States as PlayerStates
+from app.models.player import Player, Roles, States as PlayerStates
 def createVillager(id = None):
     player = Player(id)
     player.state = PlayerStates.ALIVE

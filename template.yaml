@@ -8,20 +8,22 @@ Resources:
     NewGameFunction:
         Type: AWS::Serverless::Function
         Properties:
+            FunctionName: MafiaNewGame
             Runtime: python3.8
-            CodeUri: mafia/
+            CodeUri: app/
             Handler: mafiaNewGame.lambda_handler
             Events:
                 NewGame:
                     Type: Api 
                     Properties:
-                        Path: /newgame
+                        Path: /newgame/{id}
                         Method: get
     AddPlayerFunction:
         Type: AWS::Serverless::Function
         Properties:
+            FunctionName: MafiaAddPlayer
             Runtime: python3.8
-            CodeUri: mafia/
+            CodeUri: app/
             Handler: mafiaAddPlayer.lambda_handler
             Events:
                 NewGame:
@@ -36,10 +38,3 @@ Resources:
                 Name: _id
                 Type: String
             TableName: gameState
-    PlayerTable:
-        Type: AWS::Serverless::SimpleTable
-        Properties:
-            PrimaryKey: 
-                Name: _id
-                Type: String
-            TableName: players

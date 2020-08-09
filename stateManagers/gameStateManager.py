@@ -34,7 +34,8 @@ class GameStateManager(object):
                 self.gameState.state = GameStates.NIGHT
         elif action == Actions.ADD_PLAYER:
             p = Player(data)
-            self.gameState.players.append(p)
+            if len([p for p in self.gameState.players if p.id == data]) == 0:
+                self.gameState.players.append(p)
         elif action == Actions.REMOVE_PLAYER:
             toRemove = self._findPlayerWithId(data)
             self.gameState.players.remove(toRemove)

@@ -61,3 +61,14 @@ def test_GameStateMarshalling_RemovePlayerAction_PlayerRemoved():
     assert player not in state.players
 
 #TODO add non happy path tests
+
+def test_GameStateMarshalling_AddPlayerWithDupeId_PlayerNotAdded():
+    state = Game()
+    p_id = 'test'
+    state.state = GameStates.MARSHALLING
+    systemUnderTest = GameStateManager(state)
+
+    systemUnderTest.transition(Actions.ADD_PLAYER, p_id)
+    systemUnderTest.transition(Actions.ADD_PLAYER, p_id)
+
+    assert len(state.players) == 1

@@ -1,5 +1,5 @@
 import pytest
-from app.models.gameState import Game, States
+from models.gameState import Game, States
 
 def test_defaultGameState():
     systemUnderTest = Game()

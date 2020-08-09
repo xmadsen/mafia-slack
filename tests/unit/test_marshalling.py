@@ -1,8 +1,8 @@
 import pytest
 import random
-from app.models.gameState import Game, States as GameStates
-from app.models.player import Player, Roles
-from app.stateManagers.gameStateManager import GameStateManager, Actions
+from models.gameState import Game, States as GameStates
+from models.player import Player, Roles
+from stateManagers.gameStateManager import GameStateManager, Actions
 from tests.unit.testHelpers import createVillager
 
 def test_GameStateMarshallingWithEnoughPlayers_GameStartAction_StateIsNight():

@@ -1,5 +1,5 @@
 import pytest
-from app.models.player import Player, Roles, States
+from models.player import Player, Roles, States
 
 def test_defaultState():
     systemUnderTest = Player()

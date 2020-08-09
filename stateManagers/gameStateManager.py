@@ -1,6 +1,6 @@
 import random
-from app.models.gameState import States as GameStates
-from app.models.player import Roles, States as PlayerStates
+from models.gameState import States as GameStates
+from models.player import Roles, States as PlayerStates
 
 class Actions:
     START_GAME = 'START_GAME'

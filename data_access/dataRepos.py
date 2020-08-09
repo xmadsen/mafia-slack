@@ -1,7 +1,7 @@
 import boto3
 from boto3.dynamodb.conditions import Attr
-from app.models.gameState import Game
-from app.models.player import Player
+from models.gameState import Game
+from models.player import Player
 
 class GameStateRepo(object):
     def __init__(self, dynamo_endpoint = None):

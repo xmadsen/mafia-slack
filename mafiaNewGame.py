@@ -8,28 +8,20 @@ def new_game(gameId):
     
     return state
 
-def generate_new_game_state():
-    return {
-        '_id' : 'a',
-        'state': 'marshalling',
-        'players': []
-    }
-
 def lambda_handler(event, context):
     try:
-        game = new_game(event['game_id'])
-        print(game)
+        id = event['game_id']
+        game = new_game(id)
         state = None
         if game == None:
             message = json.dumps('Game already exists.')
         else:
             message = json.dumps('Marshalling new game')
-            state = game['state']
         response = {
             'statusCode': 200,
             'body': { 
                 'message': message,
-                'game_id': event['game_id'],
+                'game_id': id,
                 'game_state': state
             }
         }

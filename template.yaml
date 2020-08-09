@@ -16,21 +16,21 @@ Resources:
                 NewGame:
                     Type: Api 
                     Properties:
-                        Path: /newgame/{id}
+                        Path: /newgame/{game_id}
                         Method: get
-    # AddPlayerFunction:
-    #     Type: AWS::Serverless::Function
-    #     Properties:
-    #         FunctionName: MafiaAddPlayer
-    #         Runtime: python3.8
-    #         CodeUri: ./
-    #         Handler: mafiaAddPlayer.lambda_handler
-    #         Events:
-    #             NewGame:
-    #                 Type: Api 
-    #                 Properties:
-    #                     Path: /addPlayer
-    #                     Method: get
+    UpdateGameFunction:
+        Type: AWS::Serverless::Function
+        Properties:
+            FunctionName: MafiaUpdateGame
+            Runtime: python3.8
+            CodeUri: ./
+            Handler: mafiaUpdateGame.lambda_handler
+            Events:
+                NewGame:
+                    Type: Api 
+                    Properties:
+                        Path: /updategame/{game_id}/{action}/{player_id}
+                        Method: get
     GameStateTable:
         Type: AWS::Serverless::SimpleTable
         Properties:

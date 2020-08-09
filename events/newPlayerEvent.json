@@ -1,0 +1,5 @@
+{
+    "game_id" : "test",
+    "player_id" : "test_player",
+    "action" : "ADD_PLAYER"
+}

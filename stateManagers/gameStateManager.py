@@ -1,6 +1,6 @@
 import random
 from models.gameState import States as GameStates
-from models.player import Roles, States as PlayerStates
+from models.player import Player, Roles, States as PlayerStates
 
 class Actions:
     START_GAME = 'START_GAME'
@@ -33,7 +33,8 @@ class GameStateManager(object):
                 self._assignPlayerRoles()
                 self.gameState.state = GameStates.NIGHT
         elif action == Actions.ADD_PLAYER:
-            self.gameState.players.append(data)
+            p = Player(data)
+            self.gameState.players.append(p)
         elif action == Actions.REMOVE_PLAYER:
             toRemove = self._findPlayerWithId(data)
             self.gameState.players.remove(toRemove)

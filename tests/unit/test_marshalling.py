@@ -41,13 +41,13 @@ def test_GameStateMarshallingWithEnoughPlayers_GameStartAction_PlayersAssignedRo
 
 def test_GameStateMarshalling_AddPlayerAction_PlayerAdded():
     state = Game()
+    p_id = 'test'
     state.state = GameStates.MARSHALLING
     systemUnderTest = GameStateManager(state)
-    player = Player()
 
-    systemUnderTest.transition(Actions.ADD_PLAYER, player)
+    systemUnderTest.transition(Actions.ADD_PLAYER, p_id)
 
-    assert player in state.players
+    assert p_id in [p.id for p in state.players]
 
 def test_GameStateMarshalling_RemovePlayerAction_PlayerRemoved():
     state = Game()

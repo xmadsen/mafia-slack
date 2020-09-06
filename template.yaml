@@ -17,8 +17,8 @@ Resources:
                 NewGame:
                     Type: Api 
                     Properties:
-                        Path: /newgame/{game_id}
-                        Method: get
+                        Path: /newgame
+                        Method: post
     UpdateGameFunction:
         Type: AWS::Serverless::Function
         Properties:

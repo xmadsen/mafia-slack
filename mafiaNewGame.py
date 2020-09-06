@@ -1,6 +1,6 @@
 import json
 from data_access.dataRepos import GameStateRepo
-
+from util.slack_payload_parser import parse_payload
 
 def new_game(gameId):
     repo = GameStateRepo()
@@ -10,10 +10,11 @@ def new_game(gameId):
     return state
 
 def lambda_handler(event, context):
-    print(event)
-    print(context)
-    #try:
-    id = extractIdParameter(event)
+    print(f"Received event:\n{json.dumps(event)}\nWith context:\n{context}")
+    slack_body = event.get("body")
+    slack_event = parse_payload(slack_body)
+    print(f"Slack data:\n{slack_event}")
+    id = extractIdParameter(slack_event)
     game = new_game(id)
     state = None
     if game == None:
@@ -30,22 +31,13 @@ def lambda_handler(event, context):
         }),
         'isBase64Encoded' : False
     }
-    # except Exception as e:
-    #     print(e)
-    #     response = {
-    #         'statusCode': 500,
-    #         'body': json.dumps('Error creating game!')
-    #     }
     return response
 
 def extractIdParameter(event):
-    if 'game_id' in event:
-        return event['game_id']
-    elif 'pathParameters' in event:
-        if 'game_id' in event['pathParameters']:
-            return event['pathParameters']['game_id']
+    if 'team_id' in event:
+        return event['team_id']
     else:
-        raise ValueError('Missing game_id parameter')
+        raise ValueError('Missing team_id parameter')
 
 if __name__ == "__main__":
     print(new_game(None))

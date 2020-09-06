@@ -16,18 +16,20 @@ def lambda_handler(event, context):
     print(f"Slack data:\n{slack_event}")
     id = extractIdParameter(slack_event)
     game = new_game(id)
-    state = None
     if game == None:
+        response_type = 'ephemeral'
         message = json.dumps('Game already exists.')
     else:
-        message = json.dumps('Marshalling new game')
+        response_type = 'in_channel'
+        message = json.dumps('A new game of mafia is about to start. type /joinmafia to get in on the action.')
     response = {
         'statusCode': 200,
         'headers' : {},
         'body': json.dumps({ 
-            'message': message,
+            'response_type' : response_type,
+            'text': message,
             'game_id': id,
-            'game_state': state
+            'game_state': game
         }),
         'isBase64Encoded' : False
     }

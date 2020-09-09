@@ -19,13 +19,13 @@ class GameStateManager(object):
 
     def transition(self, action, data=None):
         if self.gameState.state == GameStates.MARSHALLING:
-            self._transitionFromMarshalling(action, data)
+            return self._transitionFromMarshalling(action, data)
         elif self.gameState.state == GameStates.NIGHT:
-            self._transitionFromNight(action, data)
+            return self._transitionFromNight(action, data)
         elif self.gameState.state == GameStates.DAY:
-            self._transitionFromDay(action, data)
+            return self._transitionFromDay(action, data)
         elif self.gameState.state == GameStates.TRIAL:
-            self._transitionFromTrial(action)
+            return self._transitionFromTrial(action)
     
     def _transitionFromMarshalling(self, action, data):
         if action == Actions.START_GAME:
@@ -36,6 +36,7 @@ class GameStateManager(object):
             p = Player(data)
             if len([p for p in self.gameState.players if p.id == data]) == 0:
                 self.gameState.players.append(p)
+                return f"<@{data}> has joined the game!"
         elif action == Actions.REMOVE_PLAYER:
             toRemove = self._findPlayerWithId(data)
             self.gameState.players.remove(toRemove)

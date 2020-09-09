@@ -1,9 +1,11 @@
 import json
 from data_access.dataRepos import GameStateRepo
 from stateManagers.gameStateManager import GameStateManager
+from util.slack_payload_parser import parse_payload
 
 def lambda_handler(event, context):
-    #try:
+    print(f"Received event:\n{json.dumps(event)}\nWith context:\n{context}")
+    
     game_id, action, player_id = extractParameters(event)
     gameRepo = GameStateRepo()
 
@@ -11,36 +13,28 @@ def lambda_handler(event, context):
     if gameState == None:
         return None
     manager = GameStateManager(gameState)
-    manager.transition(action,player_id)
-
+    response_text = str(manager.transition(action,player_id))
+    print(response_text)
     gameRepo.UpdateGame(gameState)
     response = {
         'statusCode': 200,
         'headers' : {},
         'body': json.dumps({
-            'message' : json.dumps('Game state updated'),
-            'game': gameRepo._serializeGame(gameState)
+            'response_type' : 'in_channel',
+            'text' : response_text,
+            'game_id' : game_id
             }),
         'isBase64Encoded' : False
     }
-    # except Exception as e:
-    #     print(e)
-    #     response = {
-    #         'statusCode': 500,
-    #         'headers' : {},
-    #         'body': json.dumps('Error updating game!'),
-    #         'isBase64Encoded' : False
-    #     }
     return response
 
 def extractParameters(event):
-    if 'game_id' in event:
-        game_id = event['game_id']
-    elif 'pathParameters' in event:
-        if 'game_id' in event['pathParameters']:
-            game_id = event['pathParameters']['game_id']
-    else:
-        raise ValueError('Missing game_id parameter')
+
+    slack_body = event.get("body")
+    slack_event = parse_payload(slack_body)
+    print(f"Slack data:\n{slack_event}")
+    
+    game_id = slack_event['team_id']
 
     if 'action' in event:
         action = event['action']
@@ -50,12 +44,7 @@ def extractParameters(event):
     else:
         raise ValueError('Missing action parameter')
 
-    player_id = None
-    if 'player_id' in event:
-        player_id = event['player_id']
-    elif 'pathParameters' in event:
-        if 'player_id' in event['pathParameters']:
-            player_id = event['pathParameters']['player_id']
+    player_id = slack_event['user_id']
 
     return game_id, action, player_id
 

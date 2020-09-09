@@ -31,13 +31,8 @@ Resources:
                 UpdateGame:
                     Type: Api 
                     Properties:
-                        Path: /updategame/{game_id}/{action}
-                        Method: get
-                UpdateGameWithPlayer:
-                    Type: Api 
-                    Properties:
-                        Path: /updategame/{game_id}/{action}/{player_id}
-                        Method: get
+                        Path: /updategame/{action}
+                        Method: post
     GameStateTable:
         Type: AWS::Serverless::SimpleTable
         Properties:

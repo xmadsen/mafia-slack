@@ -28,8 +28,7 @@ def lambda_handler(event, context):
         'body': json.dumps({ 
             'response_type' : response_type,
             'text': message,
-            'game_id': id,
-            'game_state': game
+            'game_id': id
         }),
         'isBase64Encoded' : False
     }

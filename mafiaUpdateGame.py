@@ -16,7 +16,6 @@ def lambda_handler(event, context):
     manager = GameStateManager(gameState)
     success = manager.transition(action,player_id)
     response_text = get_state_change_message(gameState, success, action, player_id)
-    print(response_text)
     gameRepo.UpdateGame(gameState)
     response = {
         'statusCode': 200,

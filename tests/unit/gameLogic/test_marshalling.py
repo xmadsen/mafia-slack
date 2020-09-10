@@ -11,9 +11,10 @@ def test_GameStateMarshallingWithEnoughPlayers_GameStartAction_StateIsNight():
     state.players = [Player(), Player(), Player(), Player()]
     systemUnderTest = GameStateManager(state)
 
-    systemUnderTest.transition(Actions.START_GAME)
+    success = systemUnderTest.transition(Actions.START_GAME)
 
     assert state.state == GameStates.NIGHT
+    assert success
 
 def test_GameStateMarshallingWithoutEnoughPlayers_GameStartAction_StateIsMarshalling():
     state = Game()
@@ -21,9 +22,10 @@ def test_GameStateMarshallingWithoutEnoughPlayers_GameStartAction_StateIsMarshal
     state.players = [Player(),Player(),Player()]
     systemUnderTest = GameStateManager(state)
 
-    systemUnderTest.transition(Actions.START_GAME)
+    success = systemUnderTest.transition(Actions.START_GAME)
 
     assert state.state == GameStates.MARSHALLING
+    assert not success
 
 def test_GameStateMarshallingWithEnoughPlayers_GameStartAction_PlayersAssignedRoles():
     num_players = random.randint(4,10)
@@ -57,9 +59,10 @@ def test_GameStateMarshalling_RemovePlayerAction_PlayerRemoved():
     player = createVillager('test')
     state.players = [player]
 
-    systemUnderTest.transition(Actions.REMOVE_PLAYER, player.id)
+    success = systemUnderTest.transition(Actions.REMOVE_PLAYER, player.id)
 
     assert player not in state.players
+    assert success
 
 #TODO add non happy path tests
 
@@ -70,6 +73,7 @@ def test_GameStateMarshalling_AddPlayerWithDupeId_PlayerNotAdded():
     systemUnderTest = GameStateManager(state)
 
     systemUnderTest.transition(Actions.ADD_PLAYER, p_id)
-    systemUnderTest.transition(Actions.ADD_PLAYER, p_id)
+    success = systemUnderTest.transition(Actions.ADD_PLAYER, p_id)
 
     assert len(state.players) == 1
+    assert not success

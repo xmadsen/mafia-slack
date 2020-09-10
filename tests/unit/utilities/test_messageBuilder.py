@@ -6,3 +6,9 @@ def test_addPlayerSuccess():
     message = get_state_change_message({}, True, Actions.ADD_PLAYER, p_id)
 
     assert message == f"<@{p_id}> has joined the game!"
+
+def test_removePlayerSuccess():
+    p_id = "test"
+    message = get_state_change_message({}, True, Actions.REMOVE_PLAYER, p_id)
+
+    assert message == f"<@{p_id}> has left the game!"

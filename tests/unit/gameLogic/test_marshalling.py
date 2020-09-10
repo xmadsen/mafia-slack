@@ -45,10 +45,10 @@ def test_GameStateMarshalling_AddPlayerAction_PlayerAdded():
     state.state = GameStates.MARSHALLING
     systemUnderTest = GameStateManager(state)
 
-    message = systemUnderTest.transition(Actions.ADD_PLAYER, p_id)
+    success = systemUnderTest.transition(Actions.ADD_PLAYER, p_id)
 
     assert p_id in [p.id for p in state.players]
-    assert message == f"<@{p_id}> has joined the game!"
+    assert success
 
 def test_GameStateMarshalling_RemovePlayerAction_PlayerRemoved():
     state = Game()

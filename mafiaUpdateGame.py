@@ -2,6 +2,7 @@ import json
 from data_access.dataRepos import GameStateRepo
 from stateManagers.gameStateManager import GameStateManager
 from util.slack_payload_parser import parse_payload
+from util.game_message_builder import get_state_change_message
 
 def lambda_handler(event, context):
     print(f"Received event:\n{json.dumps(event)}\nWith context:\n{context}")
@@ -13,7 +14,8 @@ def lambda_handler(event, context):
     if gameState == None:
         return None
     manager = GameStateManager(gameState)
-    response_text = str(manager.transition(action,player_id))
+    success = manager.transition(action,player_id)
+    response_text = get_state_change_message(gameState, success, action, player_id)
     print(response_text)
     gameRepo.UpdateGame(gameState)
     response = {

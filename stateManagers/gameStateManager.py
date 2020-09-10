@@ -32,14 +32,17 @@ class GameStateManager(object):
             if len(self.gameState.players) >= 4:
                 self._assignPlayerRoles()
                 self.gameState.state = GameStates.NIGHT
+                return True
         elif action == Actions.ADD_PLAYER:
             p = Player(data)
             if len([p for p in self.gameState.players if p.id == data]) == 0:
                 self.gameState.players.append(p)
-                return f"<@{data}> has joined the game!"
+                return True
         elif action == Actions.REMOVE_PLAYER:
             toRemove = self._findPlayerWithId(data)
             self.gameState.players.remove(toRemove)
+            return True
+        return False
 
     def _transitionFromNight(self, action, data):
         if action == Actions.MURDER:

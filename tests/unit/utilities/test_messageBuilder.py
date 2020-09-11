@@ -18,10 +18,9 @@ def test_addPlayerFailure_AlreadyJoined():
     assert message == f"You can't join if you're already in."
 
 def test_addPlayerFailure_GameStarted():
-    p_id = "test"
     game = Game()
     game.state = States.NIGHT
-    message = get_state_change_message(game, False, Actions.ADD_PLAYER, p_id)
+    message = get_state_change_message(game, False, Actions.ADD_PLAYER, None)
 
     assert message == f"The game has started. Maybe next time."
 
@@ -32,9 +31,16 @@ def test_removePlayerSuccess():
     assert message == f"<@{p_id}> has left the game!"
 
 def test_removePlayerFailure_GameStarted():
-    p_id = "test"
     game = Game()
     game.state = States.NIGHT
-    message = get_state_change_message(game, False, Actions.REMOVE_PLAYER, p_id)
+    message = get_state_change_message(game, False, Actions.REMOVE_PLAYER, None)
 
     assert message == f"The game has started. You can't leave now!"
+
+def test_startGameSuccess():
+    message = get_state_change_message({}, True, Actions.START_GAME, None)
+    assert message == "The game is starting now! If you are in the mafia you will be notified..."
+
+def test_startGameFailure():
+    message = get_state_change_message({}, False, Actions.START_GAME, None)
+    assert message == "The game can't start with less than 4 players!"

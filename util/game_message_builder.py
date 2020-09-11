@@ -15,3 +15,8 @@ def get_state_change_message(gameState, actionSuccess, action, playerId):
             return f'<@{playerId}> has left the game!'
         elif gameState.state != States.MARSHALLING:
             return "The game has started. You can't leave now!"
+    elif action == Actions.START_GAME:
+        if actionSuccess:
+            return "The game is starting now! If you are in the mafia you will be notified..."
+        else:
+            return "The game can't start with less than 4 players!"

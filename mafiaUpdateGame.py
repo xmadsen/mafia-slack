@@ -15,13 +15,17 @@ def lambda_handler(event, context):
         return None
     manager = GameStateManager(gameState)
     success = manager.transition(action,player_id)
+    response_type = 'ephemeral'
+    if success:
+        response_type = 'in_channel'
+        
     response_text = get_state_change_message(gameState, success, action, player_id)
     gameRepo.UpdateGame(gameState)
     response = {
         'statusCode': 200,
         'headers' : {},
         'body': json.dumps({
-            'response_type' : 'in_channel',
+            'response_type' : response_type,
             'text' : response_text,
             'game_id' : game_id
             }),

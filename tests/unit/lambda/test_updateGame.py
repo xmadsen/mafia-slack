@@ -1,13 +1,15 @@
 from unittest.mock import patch, MagicMock
 from mafiaUpdateGame import lambda_handler
-import json
+import json, os
 
+os.environ["SLACK_API_TOKEN"] = 'test'
 def test_ValidRequest_Returns200():
     teamId = 'test'
     userId = 'testUser'
     with patch('mafiaUpdateGame.GameStateRepo') as mockRepo:
         with patch('mafiaUpdateGame.GameStateManager') as mockStateManager:
-            result = lambda_handler({"body": f"team_id={teamId}&user_id={userId}", "action" : "ADD_PLAYER", "isBase64Encoded": False},None)
+            with patch('mafiaUpdateGame.WebClient'):
+                result = lambda_handler({"body": f"team_id={teamId}&user_id={userId}", "action" : "ADD_PLAYER", "isBase64Encoded": False},None)
     resultBody = json.loads(result['body'])
     print(resultBody)
     assert result['statusCode'] == 200

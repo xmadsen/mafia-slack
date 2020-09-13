@@ -54,6 +54,8 @@ class GameStateManager(object):
             if toMurder == None or toMurder.role == Roles.MAFIA:
                 return False
             murderer = self._findPlayerWithId(executor)
+            if murderer.role != Roles.MAFIA:
+                return False
             murderer.vote = toMurder.id
             mafiaMembers = self._findPlayersWithRole(Roles.MAFIA)
             if len([m for m in mafiaMembers if m.vote == toMurder.id]) == len([m for m in mafiaMembers if m.state == PlayerStates.ALIVE]):

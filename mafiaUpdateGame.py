@@ -3,7 +3,7 @@ import boto3
 from data_access.dataRepos import GameStateRepo
 from stateManagers.gameStateManager import GameStateManager, Actions
 from models.player import Roles
-from util.slack_payload_parser import parse_payload
+from util.slack_payload_parser import parse_payload, extract_user_id
 from util.game_message_builder import get_state_change_message
 from util.env import getEnvVar
 

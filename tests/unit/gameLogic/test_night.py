@@ -57,3 +57,17 @@ def test_MultipleMafiaMembers_MustAgreeOnWhoToKill():
 
     assert state.state == GameStates.DAY
     assert player2.state == PlayerStates.DEAD
+
+def test_VillagerCanNotMurder():
+    player1 = createVillager('test1')
+    player2 = createVillager('test1')
+    mafia = createMafia('mafia')
+    state = Game()
+    state.state = GameStates.NIGHT
+    state.players = [player1, player2, mafia]
+    systemUnderTest = GameStateManager(state)
+
+    systemUnderTest.transition(Actions.MURDER, player2.id, player1.id)
+
+    assert state.state == GameStates.NIGHT
+    assert player2.state == PlayerStates.ALIVE

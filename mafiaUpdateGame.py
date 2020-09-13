@@ -61,7 +61,7 @@ def extractParameters(event):
         raise ValueError('Missing action parameter')
 
     if 'text' in slack_event:
-        args = slack_event['text']
+        args = extract_user_id(slack_event['text'])
 
     return game_id, action, player_id, args
 

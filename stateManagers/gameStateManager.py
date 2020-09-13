@@ -17,17 +17,17 @@ class GameStateManager(object):
     def __init__(self, gameState):
         self.gameState = gameState
 
-    def transition(self, action, data=None):
+    def transition(self, action, data=None, executor=None):
         if self.gameState.state == GameStates.MARSHALLING:
-            return self._transitionFromMarshalling(action, data)
+            return self._transitionFromMarshalling(action, data, executor)
         elif self.gameState.state == GameStates.NIGHT:
-            return self._transitionFromNight(action, data)
+            return self._transitionFromNight(action, data, executor)
         elif self.gameState.state == GameStates.DAY:
-            return self._transitionFromDay(action, data)
+            return self._transitionFromDay(action, data, executor)
         elif self.gameState.state == GameStates.TRIAL:
             return self._transitionFromTrial(action)
     
-    def _transitionFromMarshalling(self, action, data):
+    def _transitionFromMarshalling(self, action, data, executor):
         if action == Actions.START_GAME:
             if len(self.gameState.players) >= 4:
                 self._assignPlayerRoles()
@@ -44,16 +44,22 @@ class GameStateManager(object):
             return True
         return False
 
-    def _transitionFromNight(self, action, data):
+    def _transitionFromNight(self, action, data, executor):
         if action == Actions.MURDER:
             toMurder = self._findPlayerWithId(data)
-            toMurder.state = PlayerStates.DEAD
-            if self._isGameOver():
-                self.gameState.state = GameStates.GAME_OVER
-            else:
-                self.gameState.state = GameStates.DAY
+            murderer = self._findPlayerWithId(executor)
+            murderer.vote = toMurder.id
+            mafiaMembers = self._findPlayersWithRole(Roles.MAFIA)
+            if len([m for m in mafiaMembers if m.vote == toMurder.id]) == len([m for m in mafiaMembers if m.state == PlayerStates.ALIVE]):
+                toMurder.state = PlayerStates.DEAD
+                if self._isGameOver():
+                    self.gameState.state = GameStates.GAME_OVER
+                    return True
+                else:
+                    self.gameState.state = GameStates.DAY
+                    return True
 
-    def _transitionFromDay(self, action, data):
+    def _transitionFromDay(self, action, data, executor):
         if action == Actions.ACCUSE:
             accusedPlayer = self._findPlayerWithId(data)
             accusedPlayer.state = PlayerStates.ON_TRIAL
@@ -87,6 +93,8 @@ class GameStateManager(object):
     
     def _findPlayersWithState(self, state):
         return [p for p in self.gameState.players if p.state == state]
+    def _findPlayersWithRole(self, role):
+        return [p for p in self.gameState.players if p.role == role]
 
     def _isGameOver(self):
         mafiaCount = len([p for p in self.gameState.players if p.role == Roles.MAFIA and p.state == PlayerStates.ALIVE])

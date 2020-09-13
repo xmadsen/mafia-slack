@@ -21,8 +21,9 @@ def test_FullGame_MafiaWins():
     print('game begins')
     manager.printGameState()
 
+    mafia = [p for p in manager.gameState.players if p.role == Roles.MAFIA][0]
     to_kill = [p for p in manager.gameState.players if p.role == Roles.VILLAGER and p.state == PlayerStates.ALIVE][0]
-    manager.transition(Actions.MURDER, to_kill.id)
+    manager.transition(Actions.MURDER, to_kill.id, mafia.id)
     print('the mafia has killed a villager')
     manager.printGameState()
 
@@ -55,8 +56,9 @@ def test_FullGame_VillageWins():
     print('game begins')
     manager.printGameState()
 
+    mafia = [p for p in manager.gameState.players if p.role == Roles.MAFIA][0]
     to_kill = [p for p in manager.gameState.players if p.role == Roles.VILLAGER and p.state == PlayerStates.ALIVE][0]
-    manager.transition(Actions.MURDER, to_kill.id)
+    manager.transition(Actions.MURDER, to_kill.id, mafia.id)
     print('the mafia has killed a villager')
     manager.printGameState()
 

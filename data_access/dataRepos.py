@@ -36,7 +36,8 @@ class GameStateRepo(object):
         return {
             '_id' : player.id,
             'state' : player.state,
-            'role' : player.role
+            'role' : player.role,
+            'vote' :player.vote
         }
 
     def _deserializeGame(self,game):
@@ -51,5 +52,6 @@ class GameStateRepo(object):
         p.id = player['_id']
         p.state = player['state']
         p.role = player['role']
+        p.vote = player['vote']
         return p
     

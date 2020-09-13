@@ -23,7 +23,7 @@ def lambda_handler(event, context):
     if gameState == None:
         return None
     manager = GameStateManager(gameState)
-    success = manager.transition(action,executor=player_id)
+    success = manager.transition(action,executor=player_id, data=args)
     response_type = 'ephemeral'
     if success:
         response_type = 'in_channel'

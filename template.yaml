@@ -5,6 +5,10 @@ Globals:
         Runtime: python3.8
         Timeout: 180
 Resources:
+    SlackManagementQueue: 
+        Type: AWS::SQS::Queue
+        Properties: 
+            VisibilityTimeout: 180
     NewGameFunction:
         Type: AWS::Serverless::Function
         Properties:
@@ -13,6 +17,9 @@ Resources:
             CodeUri: ./
             Handler: mafiaNewGame.lambda_handler
             Policies: AmazonDynamoDBFullAccess
+            Environment:
+                Variables:
+                    DYNAMODB_TABLE: !Ref GameStateTable
             Events:
                 NewGame:
                     Type: Api 
@@ -26,13 +33,35 @@ Resources:
             Runtime: python3.8
             CodeUri: ./
             Handler: mafiaUpdateGame.lambda_handler
-            Policies: AmazonDynamoDBFullAccess
+            Policies: 
+                - AmazonDynamoDBFullAccess
+                - AmazonSQSFullAccess
+            Environment:
+                Variables:
+                    DYNAMODB_TABLE: !Ref GameStateTable
+                    QUEUE_URL: !Ref SlackManagementQueue
             Events:
                 UpdateGame:
                     Type: Api 
                     Properties:
                         Path: /updategame/{action}
                         Method: post
+    ManageSlackFunction:
+        Type: AWS::Serverless::Function
+        DependsOn: SlackManagementQueue
+        Properties:
+            FunctionName: MafiaManageSlack
+            Runtime: python3.8
+            CodeUri: ./
+            Handler: mafiaManageSlack.lambda_handler
+            Policies: AmazonDynamoDBFullAccess
+            Events:
+                SQSEvent:
+                    Type: SQS
+                    Properties:
+                        Queue: !GetAtt SlackManagementQueue.Arn
+                        BatchSize: 10
+                        Enabled: false
     GameStateTable:
         Type: AWS::Serverless::SimpleTable
         Properties:

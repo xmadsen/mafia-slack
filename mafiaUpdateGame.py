@@ -4,10 +4,13 @@ from stateManagers.gameStateManager import GameStateManager, Actions
 from models.player import Roles
 from util.slack_payload_parser import parse_payload
 from util.game_message_builder import get_state_change_message
-from slack import WebClient
+import boto3
 
+QUEUE_URL = os.environ["QUEUE_URL"]
 def updateSlack(state, action):
-    client = WebClient(token=os.environ["SLACK_API_TOKEN"])
+    client = boto3.client('sqs')
+    client.send_message(QueueUrl = QUEUE_URL, MessageBody=json.dumps({'state':state, 'action':action}))
+    """ client = WebClient(token=API_TOKEN)
     if action == Actions.START_GAME:
         #create a private channel for the mafia
         mafiaMembers = ','.join([p.id for p in state.players if p.role == Roles.MAFIA])
@@ -23,7 +26,7 @@ def updateSlack(state, action):
             response = client.conversations_create(name=mafiaChannel, is_private=True)
             channelId = response['channel']['id']
         print(f'Inviting {mafiaMembers} to mafia channel')
-        client.conversations_invite(channel=channelId, users=mafiaMembers)
+        client.conversations_invite(channel=channelId, users=mafiaMembers) """
         
 
 
@@ -41,7 +44,7 @@ def lambda_handler(event, context):
     response_type = 'ephemeral'
     if success:
         response_type = 'in_channel'
-        updateSlack(gameState, action)
+        updateSlack(gameRepo._serializeGame(gameState), action)
     response_text = get_state_change_message(gameState, success, action, player_id)
     gameRepo.UpdateGame(gameState)
     response = {

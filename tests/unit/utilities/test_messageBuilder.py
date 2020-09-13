@@ -44,3 +44,10 @@ def test_startGameSuccess():
 def test_startGameFailure():
     message = get_state_change_message({}, False, Actions.START_GAME, None)
     assert message == "The game can't start with less than 4 players!"
+
+def test_playerMurderedSuccess():
+    game = Game()
+    game.state = States.DAY
+    p_id = "test"
+    message = get_state_change_message(game, True, Actions.MURDER, target=p_id)
+    assert message == f"Another beautiful morning! One that <@{p_id}> won't get to experience, for they are dead! Murdered in the night! One among you is the culprit!"

@@ -27,3 +27,4 @@ def test_StartGame_CreatesChannelAndInvitesMafia():
         mafiaManageSlack.lambda_handler(createSqsEvent({'state':repo._serializeGame(game), 'action':Actions.START_GAME}), None)
         slackClient.conversations_create.assert_called_with(name='mafia-secrets', is_private=True)
         slackClient.conversations_invite.assert_called_with(channel=testcId, users=testpId)
+        slackClient.chat_postMessage.assert_called_with(channel=testcId, text='You are members of the local mafia. Rabble-rousers in the village have decided to make a stand against you. It is time you taught them a lesson...')

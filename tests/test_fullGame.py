@@ -10,10 +10,10 @@ def test_FullGame_MafiaWins():
     print('game marshalling no players yet.')
     manager.printGameState()
 
-    manager.transition(Actions.ADD_PLAYER,Player('1'))
-    manager.transition(Actions.ADD_PLAYER,Player('2'))
-    manager.transition(Actions.ADD_PLAYER,Player('3'))
-    manager.transition(Actions.ADD_PLAYER,Player('4'))
+    manager.transition(Actions.ADD_PLAYER,executor = '1')
+    manager.transition(Actions.ADD_PLAYER,executor = '2')
+    manager.transition(Actions.ADD_PLAYER,executor = '3')
+    manager.transition(Actions.ADD_PLAYER,executor = '4')
     print('enough players have joined to start')
     manager.printGameState()
 
@@ -45,10 +45,10 @@ def test_FullGame_VillageWins():
     print('game marshalling no players yet.')
     manager.printGameState()
 
-    manager.transition(Actions.ADD_PLAYER,Player('1'))
-    manager.transition(Actions.ADD_PLAYER,Player('2'))
-    manager.transition(Actions.ADD_PLAYER,Player('3'))
-    manager.transition(Actions.ADD_PLAYER,Player('4'))
+    manager.transition(Actions.ADD_PLAYER, executor = '1')
+    manager.transition(Actions.ADD_PLAYER, executor = '2')
+    manager.transition(Actions.ADD_PLAYER, executor = '3')
+    manager.transition(Actions.ADD_PLAYER, executor = '4')
     print('enough players have joined to start')
     manager.printGameState()
 

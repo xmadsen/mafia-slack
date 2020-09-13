@@ -31,6 +31,7 @@ def processRecords(recoredList):
                 channelId = response['channel']['id']
             print(f'Inviting {mafiaMembers} to mafia channel')
             client.conversations_invite(channel=channelId, users=mafiaMembers)
+            client.chat_postMessage(channel=channelId, text='You are members of the local mafia. Rabble-rousers in the village have decided to make a stand against you. It is time you taught them a lesson...')
 
 def lambda_handler(event, context):
     print(f"Received event:\n{json.dumps(event)}\nWith context:\n{context}")

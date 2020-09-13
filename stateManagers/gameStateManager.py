@@ -18,6 +18,10 @@ class GameStateManager(object):
         self.gameState = gameState
 
     def transition(self, action, data=None, executor=None):
+        '''
+            data - typically the player id of the player who the action is targeting
+            executor - the player id of the player who is taking the action.
+        '''
         if self.gameState.state == GameStates.MARSHALLING:
             return self._transitionFromMarshalling(action, data, executor)
         elif self.gameState.state == GameStates.NIGHT:
@@ -34,12 +38,12 @@ class GameStateManager(object):
                 self.gameState.state = GameStates.NIGHT
                 return True
         elif action == Actions.ADD_PLAYER:
-            p = Player(data)
-            if len([p for p in self.gameState.players if p.id == data]) == 0:
+            p = Player(executor)
+            if len([p for p in self.gameState.players if p.id == executor]) == 0:
                 self.gameState.players.append(p)
                 return True
         elif action == Actions.REMOVE_PLAYER:
-            toRemove = self._findPlayerWithId(data)
+            toRemove = self._findPlayerWithId(executor)
             self.gameState.players.remove(toRemove)
             return True
         return False
@@ -47,6 +51,8 @@ class GameStateManager(object):
     def _transitionFromNight(self, action, data, executor):
         if action == Actions.MURDER:
             toMurder = self._findPlayerWithId(data)
+            if toMurder == None or toMurder.role == Roles.MAFIA:
+                return False
             murderer = self._findPlayerWithId(executor)
             murderer.vote = toMurder.id
             mafiaMembers = self._findPlayersWithRole(Roles.MAFIA)
@@ -54,10 +60,9 @@ class GameStateManager(object):
                 toMurder.state = PlayerStates.DEAD
                 if self._isGameOver():
                     self.gameState.state = GameStates.GAME_OVER
-                    return True
                 else:
                     self.gameState.state = GameStates.DAY
-                    return True
+            return True
 
     def _transitionFromDay(self, action, data, executor):
         if action == Actions.ACCUSE:
@@ -89,7 +94,10 @@ class GameStateManager(object):
         return len(self.gameState.players) // 3
 
     def _findPlayerWithId(self, id):
-        return [p for p in self.gameState.players if p.id == id][0]
+        playerList = [p for p in self.gameState.players if p.id == id]
+        if len(playerList) > 0:
+            return playerList[0]
+        return None
     
     def _findPlayersWithState(self, state):
         return [p for p in self.gameState.players if p.state == state]

@@ -47,7 +47,7 @@ def test_GameStateMarshalling_AddPlayerAction_PlayerAdded():
     state.state = GameStates.MARSHALLING
     systemUnderTest = GameStateManager(state)
 
-    success = systemUnderTest.transition(Actions.ADD_PLAYER, p_id)
+    success = systemUnderTest.transition(Actions.ADD_PLAYER, executor=p_id)
 
     assert p_id in [p.id for p in state.players]
     assert success
@@ -59,7 +59,7 @@ def test_GameStateMarshalling_RemovePlayerAction_PlayerRemoved():
     player = createVillager('test')
     state.players = [player]
 
-    success = systemUnderTest.transition(Actions.REMOVE_PLAYER, player.id)
+    success = systemUnderTest.transition(Actions.REMOVE_PLAYER, executor=player.id)
 
     assert player not in state.players
     assert success

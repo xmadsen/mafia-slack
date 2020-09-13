@@ -16,14 +16,14 @@ def updateSlack(state, action):
 def lambda_handler(event, context):
     print(f"Received event:\n{json.dumps(event)}\nWith context:\n{context}")
     
-    game_id, action, player_id = extractParameters(event)
+    game_id, action, player_id, args = extractParameters(event)
     gameRepo = GameStateRepo()
 
     gameState = gameRepo.GetGameState(game_id)
     if gameState == None:
         return None
     manager = GameStateManager(gameState)
-    success = manager.transition(action,player_id)
+    success = manager.transition(action,executor=player_id)
     response_type = 'ephemeral'
     if success:
         response_type = 'in_channel'
@@ -49,6 +49,8 @@ def extractParameters(event):
     print(f"Slack data:\n{slack_event}")
     
     game_id = slack_event['team_id']
+    player_id = slack_event['user_id']
+    args = None
 
     if 'action' in event:
         action = event['action']
@@ -58,9 +60,10 @@ def extractParameters(event):
     else:
         raise ValueError('Missing action parameter')
 
-    player_id = slack_event['user_id']
+    if 'text' in slack_event:
+        args = slack_event['text']
 
-    return game_id, action, player_id
+    return game_id, action, player_id, args
 
 if __name__ == "__main__":
     p_id = 'def'

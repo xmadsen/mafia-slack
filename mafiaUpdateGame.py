@@ -1,34 +1,17 @@
 import json, os
+import boto3
 from data_access.dataRepos import GameStateRepo
 from stateManagers.gameStateManager import GameStateManager, Actions
 from models.player import Roles
 from util.slack_payload_parser import parse_payload
 from util.game_message_builder import get_state_change_message
-import boto3
+from util.env import getEnvVar
 
-QUEUE_URL = os.environ["QUEUE_URL"]
+QUEUE_URL = getEnvVar('QUEUE_URL')
+
 def updateSlack(state, action):
     client = boto3.client('sqs')
     client.send_message(QueueUrl = QUEUE_URL, MessageBody=json.dumps({'state':state, 'action':action}))
-    """ client = WebClient(token=API_TOKEN)
-    if action == Actions.START_GAME:
-        #create a private channel for the mafia
-        mafiaMembers = ','.join([p.id for p in state.players if p.role == Roles.MAFIA])
-        mafiaChannelName = 'mafia-secrets'
-        response = client.conversations_list(types='private_channel')
-        mafiaChannels = [c for c in response['channels'] if c['name'] == mafiaChannelName]
-        if len(mafiaChannels) > 0:
-            print('Unarchiving mafia channel')
-            channelId = mafiaChannels[0]['id']
-            response = client.conversations_unarchive(channel=channelId)
-        else:
-            print('Creating mafia channel')
-            response = client.conversations_create(name=mafiaChannel, is_private=True)
-            channelId = response['channel']['id']
-        print(f'Inviting {mafiaMembers} to mafia channel')
-        client.conversations_invite(channel=channelId, users=mafiaMembers) """
-        
-
 
 def lambda_handler(event, context):
     print(f"Received event:\n{json.dumps(event)}\nWith context:\n{context}")

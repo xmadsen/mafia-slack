@@ -60,7 +60,7 @@ Resources:
                     Type: SQS
                     Properties:
                         Queue: !GetAtt SlackManagementQueue.Arn
-                        BatchSize: 10
+                        BatchSize: 1
                         Enabled: false
     GameStateTable:
         Type: AWS::Serverless::SimpleTable

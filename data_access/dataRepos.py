@@ -1,5 +1,4 @@
 import boto3
-from boto3.dynamodb.conditions import Attr
 from models.gameState import Game
 from models.player import Player
 

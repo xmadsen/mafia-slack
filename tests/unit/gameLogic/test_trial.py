@@ -12,9 +12,11 @@ def test_GameStateTrial_FoundNotGuiltyAction_StateIsDayPlayerOnTrialIsAlive():
     player = createVillager('test')
     villager1 = createVillager('v1')
     villager2 = createVillager('v2')
+    villager3 = createVillager('v3')
+    villager3.state = PlayerStates.DEAD
     mafia = createMafia('m')
     player.state = PlayerStates.ON_TRIAL
-    state.players = [player, villager2, villager1 ,mafia]
+    state.players = [player, villager2, villager1 , mafia, villager3]
 
     systemUnderTest.transition(Actions.GUILTY,executor='m')
     assert state.state == GameStates.TRIAL

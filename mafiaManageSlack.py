@@ -4,6 +4,7 @@ from data_access.dataRepos import GameStateRepo
 from stateManagers.gameStateManager import Actions
 from models.player import Roles
 from util.env import getEnvVar
+from util.game_message_builder import get_state_change_message
 
 API_TOKEN = getEnvVar('SLACK_API_TOKEN')
 
@@ -14,6 +15,11 @@ def processRecords(recoredList):
         body = json.loads(r['body'])
         state = repo._deserializeGame(body['state'])
         action = body['action']
+        sourcePlayer = body['source']
+        targetPlayer = body['target']
+        mainChannel = state.meta['channel_id']
+        message = get_state_change_message(state,True,action,sourcePlayer,targetPlayer)
+        client.chat_postMessage(channel=mainChannel,text=message)
         if action == Actions.START_GAME:
             #create a private channel for the mafia
             mafiaMembers = ','.join([p.id for p in state.players if p.role == Roles.MAFIA])

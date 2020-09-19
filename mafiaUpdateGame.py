@@ -9,9 +9,9 @@ from util.env import getEnvVar
 
 QUEUE_URL = getEnvVar('QUEUE_URL')
 
-def updateSlack(state, action):
+def updateSlack(state, action, executor, target):
     client = boto3.client('sqs')
-    client.send_message(QueueUrl = QUEUE_URL, MessageBody=json.dumps({'state':state, 'action':action}))
+    client.send_message(QueueUrl = QUEUE_URL, MessageBody=json.dumps({'state':state, 'action':action, 'source':executor, 'target':target}))
 
 def lambda_handler(event, context):
     print(f"Received event:\n{json.dumps(event)}\nWith context:\n{context}")
@@ -26,9 +26,10 @@ def lambda_handler(event, context):
     success = manager.transition(action,executor=player_id, data=target_id)
     response_type = 'ephemeral'
     if success:
-        response_type = 'in_channel'
-        updateSlack(gameRepo._serializeGame(gameState), action)
-    response_text = get_state_change_message(gameState, success, action, player_id, target_id)
+        updateSlack(gameRepo._serializeGame(gameState), action, player_id, target_id)
+        response_text='Got it!'
+    else:
+        response_text = get_state_change_message(gameState, False, action, player_id, target_id)
     print(f'Response message: {response_text}')
     gameRepo.UpdateGame(gameState)
     response = {

@@ -8,7 +8,9 @@
     - [x] player roles assigned at random.
     - [x] mafia players assigned to a private channel.
 - Night
-  - [x] MURDER - The mafia kills a villager and transitions state to day.
+  - [ ] MURDER - The mafia kills a villager and transitions state to day.
+    - [x] villager state is DEAD
+    - [ ] main channel notified of the state
 - Day
   - [ ] ACCUSE - A player accuses another of being in the mafia. state transitions to Trial
 - Trial

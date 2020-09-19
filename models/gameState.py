@@ -11,3 +11,4 @@ class Game(object):
         self.id = id
         self.state = States.MARSHALLING
         self.players = []
+        self.meta = None

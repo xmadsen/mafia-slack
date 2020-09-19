@@ -13,10 +13,11 @@ class GameStateRepo(object):
             return self._deserializeGame(state['Item'])
         return None
 
-    def CreateNewGame(self, gameId):
+    def CreateNewGame(self, gameId, meta=None):
         if 'Item' in self.table.get_item(Key = {'_id' : gameId}):
             return None
         newGameState = Game(gameId)
+        newGameState.meta = meta
         self.table.put_item(
             Item = self._serializeGame(newGameState)
         )
@@ -29,7 +30,8 @@ class GameStateRepo(object):
         return {
             '_id' : game.id,
             'state' : game.state,
-            'players' : [self._serializePlayer(p) for p in game.players]
+            'players' : [self._serializePlayer(p) for p in game.players],
+            'meta':game.meta
         }
         
     def _serializePlayer(self, player):
@@ -45,6 +47,8 @@ class GameStateRepo(object):
         g.id = game['_id']
         g.state = game['state']
         g.players = [self._deserializePlayer(p) for p in game['players']]
+        if 'meta' in game:
+            g.meta = game['meta']
         return g
 
     def _deserializePlayer(self,player):

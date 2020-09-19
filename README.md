@@ -4,11 +4,11 @@
 - Marshalling
   - [x] ADD_PLAYER
   - [x] REMOVE_PLAYER
-  - [ ] START_GAME - Transitions state to Night if enough players have joined.
-    - [ ] player roles assigned at random.
-    - [ ] mafia players assigned to a private channel.
+  - [x] START_GAME - Transitions state to Night if enough players have joined.
+    - [x] player roles assigned at random.
+    - [x] mafia players assigned to a private channel.
 - Night
-  - [ ] MURDER - The mafia kills a villager and transitions state to day.
+  - [x] MURDER - The mafia kills a villager and transitions state to day.
 - Day
   - [ ] ACCUSE - A player accuses another of being in the mafia. state transitions to Trial
 - Trial

@@ -16,19 +16,20 @@ def updateSlack(state, action):
 def lambda_handler(event, context):
     print(f"Received event:\n{json.dumps(event)}\nWith context:\n{context}")
     
-    game_id, action, player_id, args = extractParameters(event)
+    game_id, action, player_id, target_id = extractParameters(event)
     gameRepo = GameStateRepo()
 
     gameState = gameRepo.GetGameState(game_id)
     if gameState == None:
         return None
     manager = GameStateManager(gameState)
-    success = manager.transition(action,executor=player_id, data=args)
+    success = manager.transition(action,executor=player_id, data=target_id)
     response_type = 'ephemeral'
     if success:
         response_type = 'in_channel'
         updateSlack(gameRepo._serializeGame(gameState), action)
-    response_text = get_state_change_message(gameState, success, action, player_id)
+    response_text = get_state_change_message(gameState, success, action, player_id, target_id)
+    print(f'Response message: {response_text}')
     gameRepo.UpdateGame(gameState)
     response = {
         'statusCode': 200,

@@ -22,6 +22,7 @@ class GameStateManager(object):
             data - typically the player id of the player who the action is targeting
             executor - the player id of the player who is taking the action.
         '''
+        print(f'state {self.gameState.state} - {action} - {data} - {executor}')
         if self.gameState.state == GameStates.MARSHALLING:
             return self._transitionFromMarshalling(action, data, executor)
         elif self.gameState.state == GameStates.NIGHT:
@@ -29,7 +30,7 @@ class GameStateManager(object):
         elif self.gameState.state == GameStates.DAY:
             return self._transitionFromDay(action, data, executor)
         elif self.gameState.state == GameStates.TRIAL:
-            return self._transitionFromTrial(action)
+            return self._transitionFromTrial(action, data, executor)
     
     def _transitionFromMarshalling(self, action, data, executor):
         if action == Actions.START_GAME:
@@ -65,25 +66,45 @@ class GameStateManager(object):
                 else:
                     self.gameState.state = GameStates.DAY
             return True
+        return False
 
     def _transitionFromDay(self, action, data, executor):
         if action == Actions.ACCUSE:
             accusedPlayer = self._findPlayerWithId(data)
             accusedPlayer.state = PlayerStates.ON_TRIAL
             self.gameState.state = GameStates.TRIAL
+            return True
+        return False
 
-    def _transitionFromTrial(self, action):
-        player = self._findPlayersWithState(PlayerStates.ON_TRIAL)[0]
-        if action == Actions.NOT_GUILTY:
-            player.state = PlayerStates.ALIVE
-            self.gameState.state = GameStates.DAY
-        elif action == Actions.GUILTY:
-            player.state = PlayerStates.DEAD
-            if self._isGameOver():
-                self.gameState.state = GameStates.GAME_OVER
+    def _transitionFromTrial(self, action, data, executor):
+        accused = self._findPlayersWithState(PlayerStates.ON_TRIAL)[0]
+        juror = self._findPlayerWithId(executor)
+        ret = False
+        print(accused,juror)
+        if accused and juror:
+            if action == Actions.NOT_GUILTY or action == Actions.GUILTY:
+                juror.vote = action
+                ret = True
+            self._checkTrialState(accused)
+        return False
+
+    def _checkTrialState(self, accused):
+        jury_count = len([p for p in self.gameState.players if p.can_vote()])
+        votes_to_acquit = len([p for p in self.gameState.players if p.can_vote() and p.vote == Actions.NOT_GUILTY])
+        votes_to_convict = len([p for p in self.gameState.players if p.can_vote() and p.vote == Actions.GUILTY])
+        print(f'{jury_count} members on the jury')
+        print(f'{votes_to_acquit} votes to acquit')
+        print(f'{votes_to_convict} votes to convict')
+        if votes_to_acquit + votes_to_convict == jury_count:
+            if votes_to_acquit >= votes_to_convict:
+                accused.state=PlayerStates.ALIVE
+                self.gameState.state = GameStates.DAY
             else:
-                self.gameState.state = GameStates.NIGHT
-
+                accused.state = PlayerStates.DEAD
+                if self._isGameOver():
+                    self.gameState.state = GameStates.GAME_OVER
+                else:
+                    self.gameState.state = GameStates.NIGHT
     def _assignPlayerRoles(self):
         numMafia = self._getMafiaCount()
         shuffledRoster = random.sample(self.gameState.players,len(self.gameState.players))

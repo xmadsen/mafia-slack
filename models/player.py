@@ -17,3 +17,6 @@ class Player(object):
         self.vote = None
     def __str__(self):
         return f'{self.id}\t{self.role}\t{self.state}'
+
+    def can_vote(self):
+        return self.state == States.ALIVE

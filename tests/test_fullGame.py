@@ -32,7 +32,10 @@ def test_FullGame_MafiaWins():
     print('the villagers accuse one of their own')
     manager.printGameState()
 
-    manager.transition(Actions.GUILTY)
+    manager.transition(Actions.GUILTY, executor = '1')
+    manager.transition(Actions.GUILTY, executor = '2')
+    manager.transition(Actions.GUILTY, executor = '3')
+    manager.transition(Actions.GUILTY, executor = '4')
     print('an innocent man has died')
     print('game over mafia wins. they control the town')
     manager.printGameState()
@@ -67,7 +70,10 @@ def test_FullGame_VillageWins():
     print('the villagers accuse a member of the mafia')
     manager.printGameState()
 
-    manager.transition(Actions.GUILTY)
+    manager.transition(Actions.GUILTY, executor = '1')
+    manager.transition(Actions.GUILTY, executor = '2')
+    manager.transition(Actions.GUILTY, executor = '3')
+    manager.transition(Actions.GUILTY, executor = '4')
     print('the murderer has been executed')
     print('game over village wins. organized crime has been purged from the town')
     manager.printGameState()

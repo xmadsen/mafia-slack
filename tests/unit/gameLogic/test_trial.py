@@ -10,10 +10,17 @@ def test_GameStateTrial_FoundNotGuiltyAction_StateIsDayPlayerOnTrialIsAlive():
     state.state = GameStates.TRIAL
     systemUnderTest = GameStateManager(state)
     player = createVillager('test')
+    villager1 = createVillager('v1')
+    villager2 = createVillager('v2')
+    mafia = createMafia('m')
     player.state = PlayerStates.ON_TRIAL
-    state.players = [player]
+    state.players = [player, villager2, villager1 ,mafia]
 
-    systemUnderTest.transition(Actions.NOT_GUILTY)
+    systemUnderTest.transition(Actions.GUILTY,executor='m')
+    assert state.state == GameStates.TRIAL
+    systemUnderTest.transition(Actions.NOT_GUILTY,executor='v1')
+    assert state.state == GameStates.TRIAL
+    systemUnderTest.transition(Actions.NOT_GUILTY,executor='v2')
 
     assert state.state == GameStates.DAY
     assert player.state == PlayerStates.ALIVE
@@ -23,10 +30,15 @@ def test_GameStateTrial_FoundGuiltyAction_StateIsNightPlayerOnTrialIsDead():
     state.state = GameStates.TRIAL
     systemUnderTest = GameStateManager(state)
     player = createVillager('test')
+    villager1 = createVillager('v1')
+    villager2 = createVillager('v2')
+    mafia = createMafia('m')
     player.state = PlayerStates.ON_TRIAL
-    state.players = [player, createVillager(), createVillager() ,createMafia()]
+    state.players = [player, villager2, villager1 ,mafia]
 
-    systemUnderTest.transition(Actions.GUILTY)
+    systemUnderTest.transition(Actions.NOT_GUILTY,executor='v1')
+    systemUnderTest.transition(Actions.GUILTY,executor='v2')
+    systemUnderTest.transition(Actions.GUILTY,executor='m')
 
     assert state.state == GameStates.NIGHT
     assert player.state == PlayerStates.DEAD
@@ -35,11 +47,14 @@ def test_GameStateTrial_LastMafiaMemberFoundGuilty_StateIsGameOver():
     state = Game()
     state.state = GameStates.TRIAL
     systemUnderTest = GameStateManager(state)
-    player = createMafia('test')
-    player.state = PlayerStates.ON_TRIAL
-    state.players = [player]
+    mafia = createMafia('test')
+    villager1 = createVillager('v1')
+    villager2 = createVillager('v2')
+    mafia.state = PlayerStates.ON_TRIAL
+    state.players = [mafia,villager1,villager2]
 
-    systemUnderTest.transition(Actions.GUILTY)
+    systemUnderTest.transition(Actions.GUILTY,executor='v1')
+    systemUnderTest.transition(Actions.GUILTY,executor='v2')
 
     assert state.state == GameStates.GAME_OVER
-    assert player.state == PlayerStates.DEAD
+    assert mafia.state == PlayerStates.DEAD

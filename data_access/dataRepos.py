@@ -16,7 +16,7 @@ class GameStateRepo(object):
     def CreateNewGame(self, gameId, meta=None):
         existing_games = self.table.get_item(Key = {'_id' : gameId})
         if 'Item' in existing_games:
-            game = self._deserializeGame(state['Item'])
+            game = self._deserializeGame(existing_games['Item'])
             if game.state != States.GAME_OVER:
                 return None
         newGameState = Game(gameId)

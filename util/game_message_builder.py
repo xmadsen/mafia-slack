@@ -13,6 +13,10 @@ def build_gameover_message(gameState):
         return 'The villagers have shown bravery and determination in their resistance to organized crime. The mafia will think twice before trying again. GAME OVER. The villagers win.'
     else:
         return 'The mafia has made an example of this village. No longer will they resist the criminal empire. GAME OVER. The mafia wins.'
+
+def build_roster_message(gameState):
+    return 'Player\tState' + '\n'.join([f'<@{p.id}>\t{p.state}' for p in gameState.players])
+
 def get_state_change_message(gameState, actionSuccess, action, executor=None, target = None):
     if action == Actions.ADD_PLAYER:
         if actionSuccess:
@@ -30,7 +34,7 @@ def get_state_change_message(gameState, actionSuccess, action, executor=None, ta
             return "The game has started. You can't leave now!"
     elif action == Actions.START_GAME:
         if actionSuccess:
-            return "The game is starting now! If you are in the mafia you will be notified..."
+            return f"The game is starting now! If you are in the mafia you will be notified...\n{build_roster_message(gameState)}"
         else:
             return "The game can't start with less than 4 players!"
     elif action == Actions.MURDER:
@@ -38,7 +42,7 @@ def get_state_change_message(gameState, actionSuccess, action, executor=None, ta
             if gameState.state == States.DAY:
                 return f"Another beautiful morning! One that <@{target}> won't get to experience, for they are dead! Murdered in the night! One among you is the culprit!"
             elif gameState.state == States.GAME_OVER:
-                return f'<@{target}> is found dead in the morning. {build_gameover_message()}'
+                return f'<@{target}> is found dead in the morning. {build_gameover_message(gameState)}'
         else:
             return 'Hit attempt failed. Either this person does not exist or they are a member of the mafia and are under protection. Make sure you are tagging your target with @'
     elif action == Actions.ACCUSE:
@@ -49,11 +53,11 @@ def get_state_change_message(gameState, actionSuccess, action, executor=None, ta
     elif action == Actions.GUILTY or Actions.NOT_GUILTY:
         if actionSuccess:
             if gameState.state == States.NIGHT:
-                return f'<@{gameState.last_accused}> has been found guilty. {identify_player(gameState, gameState.last_accused)} They swing from the gallows as night falls on the village.'
+                return f'<@{executor}> casts their ballot. {action}! <@{gameState.last_accused}> has been found guilty. {identify_player(gameState, gameState.last_accused)} They swing from the gallows as night falls on the village.'
             elif gameState.state == States.GAME_OVER:
-                return f'<@{gameState.last_accused}> has been found guilty. {identify_player(gameState, gameState.last_accused)} {build_gameover_message(gameState)} '
+                return f'<@{executor}> casts their ballot. {action}! <@{gameState.last_accused}> has been found guilty. {identify_player(gameState, gameState.last_accused)} {build_gameover_message(gameState)} '
             elif gameState.state == States.DAY:
-                return f'<@{gameState.last_accused}> has mounted a successful defense and been found not guilty. Someone\'s gonna hang before the day is through. The question is who?'
+                return f'<@{executor}> casts their ballot. {action}! <@{gameState.last_accused}> has mounted a successful defense and been found not guilty. Someone\'s gonna hang before the day is through. The question is who?'
             else:
                 return f'<@{executor}> casts their ballot. {action}!'
         else:

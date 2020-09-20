@@ -1,4 +1,4 @@
-from util.game_message_builder import get_state_change_message
+from util.game_message_builder import get_state_change_message, build_roster_message
 from stateManagers.gameStateManager import Actions
 from models.gameState import Game, States
 from models.player import Player
@@ -38,8 +38,8 @@ def test_removePlayerFailure_GameStarted():
     assert message == f"The game has started. You can't leave now!"
 
 def test_startGameSuccess():
-    message = get_state_change_message({}, True, Actions.START_GAME, None)
-    assert message == "The game is starting now! If you are in the mafia you will be notified..."
+    message = get_state_change_message(Game(), True, Actions.START_GAME, None)
+    assert message == f"The game is starting now! If you are in the mafia you will be notified...\n{build_roster_message(Game())}"
 
 def test_startGameFailure():
     message = get_state_change_message({}, False, Actions.START_GAME, None)

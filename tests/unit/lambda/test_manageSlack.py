@@ -25,12 +25,13 @@ def test_StartGame_CreatesChannelAndInvitesMafia():
     game.meta = {'channel_id':'channel'}
     with patch('mafiaManageSlack.WebClient') as slackClientConstructor:
         with patch('mafiaManageSlack.get_state_change_message') as messageBuilder:
-            slackClient = slackClientConstructor.return_value
-            slackClient.conversations_create.return_value = {'channel':{'id':testMafiaChannelId}}
-            mafiaManageSlack.lambda_handler(createSqsEvent({'state':repo._serializeGame(game), 'action':Actions.START_GAME, 'source': 'initiator', 'target':None}), None)
-            slackClient.conversations_create.assert_called_with(name='mafia-secrets', is_private=True)
-            slackClient.conversations_invite.assert_called_with(channel=testMafiaChannelId, users=testpId)
-            slackClient.chat_postMessage.assert_called_with(channel=testMafiaChannelId, text='You are members of the local mafia. Rabble-rousers in the village have decided to make a stand against you. It is time you taught them a lesson...')
+            with patch('data_access.dataRepos.boto3'):
+                slackClient = slackClientConstructor.return_value
+                slackClient.conversations_create.return_value = {'channel':{'id':testMafiaChannelId}}
+                mafiaManageSlack.lambda_handler(createSqsEvent({'state':repo._serializeGame(game), 'action':Actions.START_GAME, 'source': 'initiator', 'target':None}), None)
+                slackClient.conversations_create.assert_called_with(name='mafia-secrets', is_private=True)
+                slackClient.conversations_invite.assert_called_with(channel=testMafiaChannelId, users=testpId)
+                slackClient.chat_postMessage.assert_called_with(channel=testMafiaChannelId, text='You are members of the local mafia. Rabble-rousers in the village have decided to make a stand against you. It is time you taught them a lesson...')
 
 def test_RecordReceived_GenerateMessageAndBroadcastToChannel():
     repo = GameStateRepo()

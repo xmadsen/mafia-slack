@@ -3,6 +3,7 @@ from slack import WebClient
 from data_access.dataRepos import GameStateRepo
 from stateManagers.gameStateManager import Actions
 from models.player import Roles
+from models.gameState import States as GameStates
 from util.env import getEnvVar
 from util.game_message_builder import get_state_change_message
 
@@ -38,6 +39,15 @@ def processRecords(recoredList):
             print(f'Inviting {mafiaMembers} to mafia channel')
             client.conversations_invite(channel=channelId, users=mafiaMembers)
             client.chat_postMessage(channel=channelId, text='You are members of the local mafia. Rabble-rousers in the village have decided to make a stand against you. It is time you taught them a lesson...')
+            #store the mafia channel
+            state.meta['mafia_channel'] = channelId
+            repo.UpdateGame(state)
+        elif state == GameStates.GAME_OVER:
+            #clean up the mafia channel and archive it
+            mafia_channel = state.meta['mafia_channel']
+            for player_id in [p.id for p in state.players if p.role == Roles.MAFIA]:
+                client.conversations_kick(channel=mafia_channel, user=player_id)
+            client.conversations_archive(channel=mafia_channel)
 
 def lambda_handler(event, context):
     print(f"Received event:\n{json.dumps(event)}\nWith context:\n{context}")

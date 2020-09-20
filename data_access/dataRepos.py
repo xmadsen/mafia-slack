@@ -31,7 +31,8 @@ class GameStateRepo(object):
             '_id' : game.id,
             'state' : game.state,
             'players' : [self._serializePlayer(p) for p in game.players],
-            'meta':game.meta
+            'meta':game.meta,
+            'last_accused':game.last_accused
         }
         
     def _serializePlayer(self, player):
@@ -47,6 +48,7 @@ class GameStateRepo(object):
         g.id = game['_id']
         g.state = game['state']
         g.players = [self._deserializePlayer(p) for p in game['players']]
+        g.last_accused = game['last_accused']
         if 'meta' in game:
             g.meta = game['meta']
         return g

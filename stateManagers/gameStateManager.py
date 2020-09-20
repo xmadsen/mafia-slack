@@ -23,15 +23,22 @@ class GameStateManager(object):
             executor - the player id of the player who is taking the action.
         '''
         print(f'state {self.gameState.state} - {action} - {data} - {executor}')
+        oldState = self.gameState.state
+        ret = False
         if self.gameState.state == GameStates.MARSHALLING:
-            return self._transitionFromMarshalling(action, data, executor)
+            ret = self._transitionFromMarshalling(action, data, executor)
         elif self.gameState.state == GameStates.NIGHT:
-            return self._transitionFromNight(action, data, executor)
+            ret = self._transitionFromNight(action, data, executor)
         elif self.gameState.state == GameStates.DAY:
-            return self._transitionFromDay(action, data, executor)
+            ret = self._transitionFromDay(action, data, executor)
         elif self.gameState.state == GameStates.TRIAL:
-            return self._transitionFromTrial(action, data, executor)
-    
+            ret = self._transitionFromTrial(action, data, executor)
+        
+        if self.gameState.state != oldState:
+            #reset player votes
+            for p in self.gameState.players:
+                p.vote=None
+        return ret
     def _transitionFromMarshalling(self, action, data, executor):
         if action == Actions.START_GAME:
             if len(self.gameState.players) >= 4:
@@ -44,17 +51,17 @@ class GameStateManager(object):
                 self.gameState.players.append(p)
                 return True
         elif action == Actions.REMOVE_PLAYER:
-            toRemove = self._findPlayerWithId(executor)
+            toRemove = self.gameState.findPlayerWithId(executor)
             self.gameState.players.remove(toRemove)
             return True
         return False
 
     def _transitionFromNight(self, action, data, executor):
         if action == Actions.MURDER:
-            toMurder = self._findPlayerWithId(data)
+            toMurder =self.gameState.findPlayerWithId(data)
             if toMurder == None or toMurder.role == Roles.MAFIA:
                 return False
-            murderer = self._findPlayerWithId(executor)
+            murderer = self.gameState.findPlayerWithId(executor)
             if murderer.role != Roles.MAFIA:
                 return False
             murderer.vote = toMurder.id
@@ -70,23 +77,24 @@ class GameStateManager(object):
 
     def _transitionFromDay(self, action, data, executor):
         if action == Actions.ACCUSE:
-            accusedPlayer = self._findPlayerWithId(data)
-            accusedPlayer.state = PlayerStates.ON_TRIAL
-            self.gameState.state = GameStates.TRIAL
+            accusedPlayer = self.gameState.findPlayerWithId(data)
+            if accusedPlayer.state == PlayerStates.ALIVE:
+                accusedPlayer.state = PlayerStates.ON_TRIAL
+                self.gameState.state = GameStates.TRIAL
+                self.gameState.last_accused = accusedPlayer.id
             return True
         return False
 
     def _transitionFromTrial(self, action, data, executor):
         accused = self._findPlayersWithState(PlayerStates.ON_TRIAL)[0]
-        juror = self._findPlayerWithId(executor)
+        juror = self.gameState.findPlayerWithId(executor)
         ret = False
-        print(accused,juror)
         if accused and juror:
             if action == Actions.NOT_GUILTY or action == Actions.GUILTY:
                 juror.vote = action
                 ret = True
             self._checkTrialState(accused)
-        return False
+        return ret
 
     def _checkTrialState(self, accused):
         jury_count = len([p for p in self.gameState.players if p.can_vote()])
@@ -115,12 +123,6 @@ class GameStateManager(object):
     
     def _getMafiaCount(self):
         return len(self.gameState.players) // 3
-
-    def _findPlayerWithId(self, id):
-        playerList = [p for p in self.gameState.players if p.id == id]
-        if len(playerList) > 0:
-            return playerList[0]
-        return None
     
     def _findPlayersWithState(self, state):
         return [p for p in self.gameState.players if p.state == state]

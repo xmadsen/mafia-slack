@@ -15,3 +15,16 @@ def test_GameStateDay_AccuseAction_StateIsTrialPlayerIsOnTrial():
 
     assert state.state == GameStates.TRIAL
     assert player.state == PlayerStates.ON_TRIAL
+
+def test_CanNotAccuseDeadPerson():
+    state = Game()
+    state.state = GameStates.DAY
+    systemUnderTest = GameStateManager(state)
+    player = createVillager('test')
+    player.state=PlayerStates.DEAD
+    state.players = [player]
+
+    systemUnderTest.transition(Actions.ACCUSE, player.id)
+
+    assert state.state == GameStates.DAY
+    assert player.state == PlayerStates.DEAD

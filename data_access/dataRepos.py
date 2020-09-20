@@ -1,5 +1,5 @@
 import boto3
-from models.gameState import Game
+from models.gameState import Game, States
 from models.player import Player
 
 class GameStateRepo(object):
@@ -14,8 +14,11 @@ class GameStateRepo(object):
         return None
 
     def CreateNewGame(self, gameId, meta=None):
-        if 'Item' in self.table.get_item(Key = {'_id' : gameId}):
-            return None
+        existing_games = self.table.get_item(Key = {'_id' : gameId})
+        if 'Item' in existing_games:
+            game = self._deserializeGame(state['Item'])
+            if game.state != States.GAME_OVER:
+                return None
         newGameState = Game(gameId)
         newGameState.meta = meta
         self.table.put_item(

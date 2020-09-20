@@ -42,12 +42,16 @@ def processRecords(recoredList):
             #store the mafia channel
             state.meta['mafia_channel'] = channelId
             repo.UpdateGame(state)
-        elif state == GameStates.GAME_OVER:
+        elif state.state == GameStates.GAME_OVER:
             #clean up the mafia channel and archive it
             mafia_channel = state.meta['mafia_channel']
             for player_id in [p.id for p in state.players if p.role == Roles.MAFIA]:
+                print(f'kicking {player_id}')
                 client.conversations_kick(channel=mafia_channel, user=player_id)
+                
+            print(f'archiving channel {mafia_channel}')
             client.conversations_archive(channel=mafia_channel)
+
 
 def lambda_handler(event, context):
     print(f"Received event:\n{json.dumps(event)}\nWith context:\n{context}")

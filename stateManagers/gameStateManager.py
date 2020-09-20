@@ -89,7 +89,7 @@ class GameStateManager(object):
         accused = self._findPlayersWithState(PlayerStates.ON_TRIAL)[0]
         juror = self.gameState.findPlayerWithId(executor)
         ret = False
-        if accused and juror:
+        if accused and juror and juror.can_vote():
             if action == Actions.NOT_GUILTY or action == Actions.GUILTY:
                 juror.vote = action
                 ret = True
@@ -113,6 +113,7 @@ class GameStateManager(object):
                     self.gameState.state = GameStates.GAME_OVER
                 else:
                     self.gameState.state = GameStates.NIGHT
+
     def _assignPlayerRoles(self):
         numMafia = self._getMafiaCount()
         shuffledRoster = random.sample(self.gameState.players,len(self.gameState.players))
@@ -122,7 +123,8 @@ class GameStateManager(object):
             p.role = Roles.VILLAGER
     
     def _getMafiaCount(self):
-        return len(self.gameState.players) // 3
+        
+        return  min(len(self.gameState.players) // 3, 2)
     
     def _findPlayersWithState(self, state):
         return [p for p in self.gameState.players if p.state == state]

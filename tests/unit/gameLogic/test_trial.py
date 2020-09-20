@@ -60,3 +60,30 @@ def test_GameStateTrial_LastMafiaMemberFoundGuilty_StateIsGameOver():
 
     assert state.state == GameStates.GAME_OVER
     assert mafia.state == PlayerStates.DEAD
+
+def test_CanNotCastVoteIfDead():
+    state = Game()
+    state.state = GameStates.TRIAL
+    systemUnderTest = GameStateManager(state)
+    mafia = createMafia('test')
+    villager1 = createVillager('v1')
+    villager2 = createVillager('v2')
+    villager2.state = PlayerStates.DEAD
+    mafia.state = PlayerStates.ON_TRIAL
+    state.players = [mafia,villager1,villager2]
+
+    systemUnderTest.transition(Actions.GUILTY,executor='v2')
+    assert villager2.vote == None
+
+def test_CanNotCastVoteIfOnTrial():
+    state = Game()
+    state.state = GameStates.TRIAL
+    systemUnderTest = GameStateManager(state)
+    mafia = createMafia('test')
+    villager1 = createVillager('v1')
+    villager2 = createVillager('v2')
+    mafia.state = PlayerStates.ON_TRIAL
+    state.players = [mafia,villager1,villager2]
+
+    systemUnderTest.transition(Actions.GUILTY,executor=mafia.id)
+    assert mafia.vote == None

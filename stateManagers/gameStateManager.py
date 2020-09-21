@@ -78,11 +78,14 @@ class GameStateManager(object):
     def _transitionFromDay(self, action, data, executor):
         if action == Actions.ACCUSE:
             accusedPlayer = self.gameState.findPlayerWithId(data)
-            if accusedPlayer.state == PlayerStates.ALIVE:
-                accusedPlayer.state = PlayerStates.ON_TRIAL
-                self.gameState.state = GameStates.TRIAL
-                self.gameState.last_accused = accusedPlayer.id
-            return True
+            accuser = self.gameState.findPlayerWithId(executor)
+            if accusedPlayer and accuser and accusedPlayer.state == PlayerStates.ALIVE:
+                accuser.vote = accusedPlayer.id
+                if self.gameState.voteCount(accusedPlayer.id) >= 2:
+                    accusedPlayer.state = PlayerStates.ON_TRIAL
+                    self.gameState.state = GameStates.TRIAL
+                    self.gameState.last_accused = accusedPlayer.id
+                return True
         return False
 
     def _transitionFromTrial(self, action, data, executor):
@@ -98,8 +101,8 @@ class GameStateManager(object):
 
     def _checkTrialState(self, accused):
         jury_count = len([p for p in self.gameState.players if p.can_vote()])
-        votes_to_acquit = len([p for p in self.gameState.players if p.can_vote() and p.vote == Actions.NOT_GUILTY])
-        votes_to_convict = len([p for p in self.gameState.players if p.can_vote() and p.vote == Actions.GUILTY])
+        votes_to_acquit = self.gameState.voteCount(Actions.NOT_GUILTY) #len([p for p in self.gameState.players if p.can_vote() and p.vote == Actions.NOT_GUILTY])
+        votes_to_convict = self.gameState.voteCount(Actions.GUILTY) #len([p for p in self.gameState.players if p.can_vote() and p.vote == Actions.GUILTY])
         print(f'{jury_count} members on the jury')
         print(f'{votes_to_acquit} votes to acquit')
         print(f'{votes_to_convict} votes to convict')
@@ -124,7 +127,7 @@ class GameStateManager(object):
     
     def _getMafiaCount(self):
         
-        return  min(len(self.gameState.players) // 3, 2)
+        return  len(self.gameState.players) // 3
     
     def _findPlayersWithState(self, state):
         return [p for p in self.gameState.players if p.state == state]

@@ -27,8 +27,11 @@ def test_FullGame_MafiaWins():
     print('the mafia has killed a villager')
     manager.printGameState()
 
-    to_accuse = [p for p in manager.gameState.players if p.role == Roles.VILLAGER and p.state == PlayerStates.ALIVE][0]
-    manager.transition(Actions.ACCUSE, to_accuse.id)
+    villagers = [p for p in manager.gameState.players if p.role == Roles.VILLAGER and p.state == PlayerStates.ALIVE]
+    to_accuse = villagers[0]
+    accuser = villagers[1]
+    manager.transition(Actions.ACCUSE, to_accuse.id, accuser.id)
+    manager.transition(Actions.ACCUSE, to_accuse.id, mafia.id)
     print('the villagers accuse one of their own')
     manager.printGameState()
 
@@ -66,7 +69,10 @@ def test_FullGame_VillageWins():
     manager.printGameState()
 
     to_accuse = [p for p in manager.gameState.players if p.role == Roles.MAFIA and p.state == PlayerStates.ALIVE][0]
-    manager.transition(Actions.ACCUSE, to_accuse.id)
+    living_villagers = [p for p in manager.gameState.players if p.role == Roles.VILLAGER and p.state == PlayerStates.ALIVE]
+    accuser1, accuser2 = living_villagers[0], living_villagers[1]
+    manager.transition(Actions.ACCUSE, to_accuse.id, accuser1.id)
+    manager.transition(Actions.ACCUSE, to_accuse.id, accuser2.id)
     print('the villagers accuse a member of the mafia')
     manager.printGameState()
 

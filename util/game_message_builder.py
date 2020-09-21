@@ -15,7 +15,7 @@ def build_gameover_message(gameState):
         return 'The mafia has made an example of this village. No longer will they resist the criminal empire. GAME OVER. The mafia wins.'
 
 def build_roster_message(gameState):
-    return 'Player\tState' + '\n'.join([f'<@{p.id}>\t{p.state}' for p in gameState.players])
+    return 'Player\tState\n' + '\n'.join([f'<@{p.id}>\t{p.state}' for p in gameState.players])
 
 def get_state_change_message(gameState, actionSuccess, action, executor=None, target = None):
     if action == Actions.ADD_PLAYER:
@@ -46,19 +46,21 @@ def get_state_change_message(gameState, actionSuccess, action, executor=None, ta
         else:
             return 'Hit attempt failed. Either this person does not exist or they are a member of the mafia and are under protection. Make sure you are tagging your target with @'
     elif action == Actions.ACCUSE:
-        if actionSuccess:
-            return f'<@{target}> has been formally accused of being a member of the mafia by <@{executor}>. In accordance with the village by-laws they now stand before a jury of their peers. The penalty for guilt is... DEATH. Will you vote guilty or not guilty?'
+        if actionSuccess and gameState.state==States.TRIAL:
+            return f'The charge against <@{target}> has been seconded by <@{executor}>. In accordance with the village by-laws they now stand before a jury of their peers. The penalty for guilt is... DEATH. Will you vote guilty or not guilty?'
+        elif actionSuccess:
+            return f'<@{target}> has been formally accused of being a member of the mafia by <@{executor}>. This is a serious accusation and before they stand trial it must be seconded!'
         else:
             return 'Sorry that is not a valid target.'
     elif action == Actions.GUILTY or Actions.NOT_GUILTY:
         if actionSuccess:
             if gameState.state == States.NIGHT:
-                return f'<@{executor}> casts their ballot. {action}! <@{gameState.last_accused}> has been found guilty. {identify_player(gameState, gameState.last_accused)} They swing from the gallows as night falls on the village.'
+                return f'<@{executor}> casts their ballot. {action}! <@{gameState.last_accused}> has been found guilty. {identify_player(gameState, gameState.last_accused)} They swing from the gallows as night falls on the village.\n{build_roster_message(gameState)}'
             elif gameState.state == States.GAME_OVER:
                 return f'<@{executor}> casts their ballot. {action}! <@{gameState.last_accused}> has been found guilty. {identify_player(gameState, gameState.last_accused)} {build_gameover_message(gameState)} '
             elif gameState.state == States.DAY:
                 return f'<@{executor}> casts their ballot. {action}! <@{gameState.last_accused}> has mounted a successful defense and been found not guilty. Someone\'s gonna hang before the day is through. The question is who?'
             else:
-                return f'<@{executor}> casts their ballot. {action}!'
+                return f'<@{executor}> casts their ballot. {action}!\nThe current vote is:\n{gameState.voteCount(Actions.GUILTY)} Guilty\n{gameState.voteCount(Actions.NOT_GUILTY)}'
         else:
             return 'Sorry! You can\'t vote!'

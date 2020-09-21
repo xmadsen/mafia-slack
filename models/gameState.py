@@ -29,4 +29,6 @@ class Game(object):
                 return Roles.VILLAGER
             else:
                 return Roles.MAFIA
+    def voteCount(self, vote):
+        return len([p for p in self.players if p.vote == vote])
                 

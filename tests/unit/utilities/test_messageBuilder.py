@@ -1,4 +1,4 @@
-from util.game_message_builder import get_state_change_message, build_roster_message
+from util.game_message_builder import get_state_change_message, build_roster_message, build_how_to_accuse_message
 from stateManagers.gameStateManager import Actions
 from models.gameState import Game, States
 from models.player import Player
@@ -39,7 +39,7 @@ def test_removePlayerFailure_GameStarted():
 
 def test_startGameSuccess():
     message = get_state_change_message(Game(), True, Actions.START_GAME, None)
-    assert message == f"The game is starting now! If you are in the mafia you will be notified...\n{build_roster_message(Game())}"
+    assert message == f"The game is starting now! If you are in the mafia you will be notified...\n\nNight falls on the village. It is peaceful here, but not for long. The mafia is up to something.\n{build_roster_message(Game())}"
 
 def test_startGameFailure():
     message = get_state_change_message({}, False, Actions.START_GAME, None)
@@ -50,4 +50,4 @@ def test_playerMurderedSuccess():
     game.state = States.DAY
     p_id = "test"
     message = get_state_change_message(game, True, Actions.MURDER, target=p_id)
-    assert message == f"Another beautiful morning! One that <@{p_id}> won't get to experience, for they are dead! Murdered in the night! One among you is the culprit!"
+    assert message == f"Another beautiful morning! One that <@{p_id}> won't get to experience, for they are dead! Murdered in the night! One among you is the culprit!\n{build_how_to_accuse_message()}"

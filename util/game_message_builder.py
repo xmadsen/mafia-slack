@@ -17,6 +17,12 @@ def build_gameover_message(gameState):
 def build_roster_message(gameState):
     return 'Player\tState\n' + '\n'.join([f'<@{p.id}>\t{p.state}' for p in gameState.players])
 
+def build_how_to_cast_vote_message():
+    return 'To vote guilty: /mafiaguilty\nto vote not guilty: /mafianotguilty'
+
+def build_how_to_accuse_message():
+    return 'To accuse or second an accusation: /mafiaaccuse @who-to-accuse'
+
 def get_state_change_message(gameState, actionSuccess, action, executor=None, target = None):
     if action == Actions.ADD_PLAYER:
         if actionSuccess:
@@ -34,22 +40,22 @@ def get_state_change_message(gameState, actionSuccess, action, executor=None, ta
             return "The game has started. You can't leave now!"
     elif action == Actions.START_GAME:
         if actionSuccess:
-            return f"The game is starting now! If you are in the mafia you will be notified...\n{build_roster_message(gameState)}"
+            return f"The game is starting now! If you are in the mafia you will be notified...\n\nNight falls on the village. It is peaceful here, but not for long. The mafia is up to something.\n{build_roster_message(gameState)}"
         else:
             return "The game can't start with less than 4 players!"
     elif action == Actions.MURDER:
         if actionSuccess:
             if gameState.state == States.DAY:
-                return f"Another beautiful morning! One that <@{target}> won't get to experience, for they are dead! Murdered in the night! One among you is the culprit!"
+                return f"Another beautiful morning! One that <@{target}> won't get to experience, for they are dead! Murdered in the night! One among you is the culprit!\n{build_how_to_accuse_message()}"
             elif gameState.state == States.GAME_OVER:
                 return f'<@{target}> is found dead in the morning. {build_gameover_message(gameState)}'
         else:
             return 'Hit attempt failed. Either this person does not exist or they are a member of the mafia and are under protection. Make sure you are tagging your target with @'
     elif action == Actions.ACCUSE:
         if actionSuccess and gameState.state==States.TRIAL:
-            return f'The charge against <@{target}> has been seconded by <@{executor}>. In accordance with the village by-laws they now stand before a jury of their peers. The penalty for guilt is... DEATH. Will you vote guilty or not guilty?'
+            return f'The charge against <@{target}> has been seconded by <@{executor}>. In accordance with the village by-laws they now stand before a jury of their peers. The penalty for guilt is... DEATH. Will you vote guilty or not guilty?\n{build_how_to_cast_vote_message()}'
         elif actionSuccess:
-            return f'<@{target}> has been formally accused of being a member of the mafia by <@{executor}>. This is a serious accusation and before they stand trial it must be seconded!'
+            return f'<@{target}> has been formally accused of being a member of the mafia by <@{executor}>. This is a serious accusation and before they stand trial it must be seconded!\n{build_how_to_accuse_message()}'
         else:
             return 'Sorry that is not a valid target.'
     elif action == Actions.GUILTY or Actions.NOT_GUILTY:
@@ -61,6 +67,6 @@ def get_state_change_message(gameState, actionSuccess, action, executor=None, ta
             elif gameState.state == States.DAY:
                 return f'<@{executor}> casts their ballot. {action}! <@{gameState.last_accused}> has mounted a successful defense and been found not guilty. Someone\'s gonna hang before the day is through. The question is who?'
             else:
-                return f'<@{executor}> casts their ballot. {action}!\nThe current vote is:\n{gameState.voteCount(Actions.GUILTY)} Guilty\n{gameState.voteCount(Actions.NOT_GUILTY)}'
+                return f'<@{executor}> casts their ballot. {action}!\nThe current vote is:\n{gameState.voteCount(Actions.GUILTY)} Guilty\n{gameState.voteCount(Actions.NOT_GUILTY)} Not Guilty\n{build_how_to_cast_vote_message()}'
         else:
             return 'Sorry! You can\'t vote!'

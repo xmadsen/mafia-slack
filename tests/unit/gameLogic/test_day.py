@@ -37,11 +37,26 @@ def test_CanNotAccuseDeadPerson():
     state = Game()
     state.state = GameStates.DAY
     systemUnderTest = GameStateManager(state)
-    player = createVillager('test')
-    player.state=PlayerStates.DEAD
-    state.players = [player]
+    dead_player = createVillager('test')
+    live_player = createVillager('v1')
+    dead_player.state=PlayerStates.DEAD
+    state.players = [dead_player,live_player]
 
-    systemUnderTest.transition(Actions.ACCUSE, player.id)
+    result = systemUnderTest.transition(Actions.ACCUSE, dead_player.id, live_player.id)
 
     assert state.state == GameStates.DAY
-    assert player.state == PlayerStates.DEAD
+    assert result == False
+
+def test_DeadManCanNotAccuse():
+    state = Game()
+    state.state = GameStates.DAY
+    systemUnderTest = GameStateManager(state)
+    dead_player = createVillager('test')
+    live_player = createVillager('v1')
+    dead_player.state=PlayerStates.DEAD
+    state.players = [dead_player, live_player]
+
+    result = systemUnderTest.transition(Actions.ACCUSE, live_player.id, dead_player.id)
+
+    assert state.state == GameStates.DAY
+    assert result == False

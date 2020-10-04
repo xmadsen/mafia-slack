@@ -53,17 +53,20 @@ def extractParameters(event):
     game_id = slack_event['team_id']
     player_id = slack_event['user_id']
     args = None
-
+    action = None
+    
     if 'action' in event:
         action = event['action']
     elif 'pathParameters' in event:
         if 'action' in event['pathParameters']:
             action = event['pathParameters']['action']
-    else:
-        raise ValueError('Missing action parameter')
+    
 
     if 'text' in slack_event:
         args = extract_user_id(slack_event['text'])
+        if action == None:
+            split_text = slack_event['text'].split()
+            action = split_text[0].upper()
 
     return game_id, action, player_id, args
 

@@ -99,12 +99,11 @@ def extractParameters(event):
     elif 'pathParameters' in event and event['pathParameters']:
         if 'action' in event['pathParameters']:
             action = event['pathParameters']['action']
-    
 
     if 'text' in slack_event:
         args = extract_user_id(slack_event['text'])
         if action == None:
-            split_text = slack_event['text'].split()
+            split_text = slack_event['text'].split('+')
             action = convert_to_action(split_text[0].upper())
 
     return game_id, action, player_id, args

@@ -46,6 +46,26 @@ Resources:
                     Properties:
                         Path: /updategame/{action}
                         Method: post
+    UniversalMafiaFunction:
+        Type: AWS::Serverless::Function
+        Properties:
+            FunctionName: MafiaUniversal
+            Runtime: python3.8
+            CodeUri: ./
+            Handler: mafiaUpdateGame.lambda_handler
+            Policies: 
+                - AmazonDynamoDBFullAccess
+                - AmazonSQSFullAccess
+            Environment:
+                Variables:
+                    DYNAMODB_TABLE: !Ref GameStateTable
+                    QUEUE_URL: !Ref SlackManagementQueue
+            Events:
+                MafiaGeneric:
+                    Type: Api 
+                    Properties:
+                        Path: /mafia
+                        Method: post
     ManageSlackFunction:
         Type: AWS::Serverless::Function
         DependsOn: SlackManagementQueue

@@ -15,7 +15,7 @@ Resources:
             FunctionName: MafiaNewGame
             Runtime: python3.8
             CodeUri: ./
-            Handler: mafiaNewGame.lambda_handler
+            Handler: mafiaUpdateGame.new_game_lambda_handler
             Policies: AmazonDynamoDBFullAccess
             Environment:
                 Variables:

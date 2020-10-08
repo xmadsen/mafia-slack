@@ -1,4 +1,5 @@
 # mafia-slack
+![Build Status](https://codebuild.us-east-1.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoiR2JPVk1vbEZ6aXFSM2JYSGpUcGF5TzVxQytUbHFjSnc3N3JrY2U3K2Y5NVpKNlBqRENPUDhXRXlGelhVdkJZL2lmTVNTd2FVU0prRjZCVmkzTTNMYmtJPSIsIml2UGFyYW1ldGVyU3BlYyI6Im14T20wWksxaTVTdUtlRTQiLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=master)
 ## Game State Machine
 ### States and actions
 - Marshalling

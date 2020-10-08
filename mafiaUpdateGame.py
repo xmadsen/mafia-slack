@@ -10,6 +10,7 @@ from util.env import getEnvVar
 QUEUE_URL = getEnvVar('QUEUE_URL')
 
 HELP = 'help'
+NEW_GAME = 'new'
 action_table = {
     'START':Actions.START_GAME,
     'ACCUSE':Actions.ACCUSE,
@@ -17,7 +18,8 @@ action_table = {
     'VOTE-GUILTY':Actions.GUILTY,
     'VOTE-INNOCENT':Actions.NOT_GUILTY,
     'JOIN':Actions.ADD_PLAYER,
-    'LEAVE':Actions.REMOVE_PLAYER
+    'LEAVE':Actions.REMOVE_PLAYER,
+    'NEW':NEW_GAME
 }
 def updateSlack(state, action, executor, target):
     client = boto3.client('sqs')
@@ -32,6 +34,7 @@ def convert_to_action(arg):
 def get_help_message():
     return '\n'.join([
         'Welcome to mafia slack bot! Valid commands are:',
+        '/mafia new - create a new game',
         '/mafia join - join a game that has not yet started',
         '/mafia leave - leave a game that has not yet started',
         '/mafia start - starts the game',
@@ -43,8 +46,9 @@ def get_help_message():
 
 def lambda_handler(event, context):
     print(f"Received event:\n{json.dumps(event)}\nWith context:\n{context}")
-    
-    game_id, action, player_id, target_id = extractParameters(event)
+    gameRepo = GameStateRepo()
+
+    game_id, channel_id, action, player_id, target_id = extractParameters(event)
     if action == HELP:
         response = {
             'statusCode': 200,
@@ -55,9 +59,25 @@ def lambda_handler(event, context):
                 }),
             'isBase64Encoded' : False
         }
+    elif action == NEW_GAME:
+        state = gameRepo.CreateNewGame(game_id, {'channel_id': channel_id})
+        if state == None:
+            response_type = 'ephemeral'
+            message = json.dumps('Game already exists.')
+        else:
+            response_type = 'in_channel'
+            message = json.dumps('A new game of mafia is about to start. type "/mafia join" to get in on the action.')
+        response = {
+            'statusCode': 200,
+            'headers' : {},
+            'body': json.dumps({ 
+                'response_type' : response_type,
+                'text': message,
+                'game_id': game_id
+            }),
+            'isBase64Encoded' : False
+        }
     else:
-        gameRepo = GameStateRepo()
-
         gameState = gameRepo.GetGameState(game_id)
         if gameState == None:
             return None
@@ -83,40 +103,6 @@ def lambda_handler(event, context):
         }
     return response
 
-def new_game(gameId, gameChannel):
-    repo = GameStateRepo()
-    
-    state = repo.CreateNewGame(gameId, {'channel_id': gameChannel})
-    
-    return state
-
-def new_game_lambda_handler(event, context):
-    print(f"Received event:\n{json.dumps(event)}\nWith context:\n{context}")
-    slack_body = event.get("body")
-    slack_event = parse_payload(slack_body)
-    print(f"Slack data:\n{slack_event}")
-    team_id, channel_id = extractIdParameters(slack_event)
-    game = new_game(team_id, channel_id)
-    if game == None:
-        response_type = 'ephemeral'
-        message = json.dumps('Game already exists.')
-    else:
-        response_type = 'in_channel'
-        message = json.dumps('A new game of mafia is about to start. type /joinmafia to get in on the action.')
-    response = {
-        'statusCode': 200,
-        'headers' : {},
-        'body': json.dumps({ 
-            'response_type' : response_type,
-            'text': message,
-            'game_id': team_id
-        }),
-        'isBase64Encoded' : False
-    }
-    return response
-
-def extractIdParameters(event):
-    return event['team_id'], event['channel_id']
 def extractParameters(event):
 
     slack_body = event.get("body")
@@ -124,6 +110,7 @@ def extractParameters(event):
     print(f"Slack data:\n{slack_event}")
     
     game_id = slack_event['team_id']
+    channel_id = slack_event['channel_id']
     player_id = slack_event['user_id']
     args = None
     action = None
@@ -140,9 +127,4 @@ def extractParameters(event):
             split_text = slack_event['text'].split('+')
             action = convert_to_action(split_text[0].upper())
 
-    return game_id, action, player_id, args
-
-if __name__ == "__main__":
-    p_id = 'def'
-    g_id = 1
-    print(add_player(p_id, g_id))
+    return game_id, channel_id, action, player_id, args

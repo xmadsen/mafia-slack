@@ -9,23 +9,6 @@ Resources:
         Type: AWS::SQS::Queue
         Properties: 
             VisibilityTimeout: 180
-    NewGameFunction:
-        Type: AWS::Serverless::Function
-        Properties:
-            FunctionName: MafiaNewGame
-            Runtime: python3.8
-            CodeUri: ./
-            Handler: mafiaUpdateGame.new_game_lambda_handler
-            Policies: AmazonDynamoDBFullAccess
-            Environment:
-                Variables:
-                    DYNAMODB_TABLE: !Ref GameStateTable
-            Events:
-                NewGame:
-                    Type: Api 
-                    Properties:
-                        Path: /newgame
-                        Method: post
     UpdateGameFunction:
         Type: AWS::Serverless::Function
         Properties:

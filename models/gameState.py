@@ -21,6 +21,15 @@ class Game(object):
         if len(playerList) > 0:
             return playerList[0]
         return None
+
+    def findPlayerOnTrial(self):
+        players = self._findPlayersWithState(PlayerStates.ON_TRIAL)
+        if len(players) > 0:
+            return players[0]
+        return None
+    
+    def findPlayersWithRole(self, role):
+        return [p for p in self.players if p.role == role]
         
     def determineWinner(self):
         if self.state == States.GAME_OVER:
@@ -31,4 +40,7 @@ class Game(object):
                 return Roles.MAFIA
     def voteCount(self, vote):
         return len([p for p in self.players if p.vote == vote])
+
+    def _findPlayersWithState(self, state):
+        return [p for p in self.players if p.state == state]
                 

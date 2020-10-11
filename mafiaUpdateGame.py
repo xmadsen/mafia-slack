@@ -66,7 +66,7 @@ def lambda_handler(event, context):
             message = json.dumps('Game already exists.')
         else:
             response_type = 'in_channel'
-            message = json.dumps('A new game of mafia is about to start. type "/mafia join" to get in on the action.')
+            message = json.dumps('A new game of mafia is about to start. type /mafia join to get in on the action.')
         response = {
             'statusCode': 200,
             'headers' : {},

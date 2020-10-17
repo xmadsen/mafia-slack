@@ -1,7 +1,7 @@
 import json, os
 import boto3
 from data_access.dataRepos import GameStateRepo
-from stateManagers.gameStateManager import GameStateManager, Actions
+from stateManagers import getInstance, Actions
 from models.player import Roles
 from util.slack_payload_parser import parse_payload, extract_user_id
 from util.game_message_builder import get_state_change_message
@@ -81,7 +81,7 @@ def lambda_handler(event, context):
         gameState = gameRepo.GetGameState(game_id)
         if gameState == None:
             return None
-        manager = GameStateManager(gameState)
+        manager = getInstance(gameState)
         success = manager.transition(action,executor=player_id, data=target_id)
         response_type = 'ephemeral'
         if success:

@@ -7,7 +7,7 @@ def test_ValidRequest_Returns200():
     teamId = 'test'
     userId = 'testUser'
     with patch('mafiaUpdateGame.GameStateRepo') as mockRepo:
-        with patch('mafiaUpdateGame.GameStateManager') as mockStateManager:
+        with patch('mafiaUpdateGame.getInstance') as mockStateManager:
             with patch('mafiaUpdateGame.json.dumps'):
                 with patch('mafiaUpdateGame.boto3'):
                     result = lambda_handler({"body": f"team_id={teamId}&user_id={userId}&channel_id=channel", "action" : "ADD_PLAYER", "isBase64Encoded": False},None)
@@ -20,7 +20,7 @@ def test_SuccessfulRequestWithOptionalArgs_SendsDataToManageSlackQueue():
     action = 'ADD_PLAYER'
     with patch('mafiaUpdateGame.GameStateRepo') as mockRepo:
         mockState = mockRepo.return_value._serializeGame.return_value
-        with patch('mafiaUpdateGame.GameStateManager') as mockStateManager:
+        with patch('mafiaUpdateGame.getInstance') as mockStateManager:
             transition_result = mockStateManager.return_value.transition.return_value = True
             with patch('mafiaUpdateGame.json.dumps') as mockJsonDumper:
                 with patch('mafiaUpdateGame.boto3') as mockboto3:
@@ -39,7 +39,7 @@ def test_SuccessfulRequestWithActionInText_CorrectActionExtracted():
     action = 'join'
     with patch('mafiaUpdateGame.GameStateRepo') as mockRepo:
         mockState = mockRepo.return_value._serializeGame.return_value
-        with patch('mafiaUpdateGame.GameStateManager') as mockStateManager:
+        with patch('mafiaUpdateGame.getInstance') as mockStateManager:
             transition_result = mockStateManager.return_value.transition.return_value = True
             with patch('mafiaUpdateGame.json.dumps') as mockJsonDumper:
                 with patch('mafiaUpdateGame.boto3') as mockboto3:
@@ -55,7 +55,7 @@ def test_help_message():
     action = 'test'
     with patch('mafiaUpdateGame.GameStateRepo') as mockRepo:
         mockState = mockRepo.return_value._serializeGame.return_value
-        with patch('mafiaUpdateGame.GameStateManager') as mockStateManager:
+        with patch('mafiaUpdateGame.getInstance') as mockStateManager:
             transition_result = mockStateManager.return_value.transition.return_value = True
             with patch('mafiaUpdateGame.json.dumps') as mockJsonDumper:
                 with patch('mafiaUpdateGame.boto3') as mockboto3:

@@ -19,6 +19,8 @@ Resources:
             Policies: 
                 - AmazonDynamoDBFullAccess
                 - AmazonSQSFullAccess
+            Layers:
+                - !Ref MafiaLayer
             Environment:
                 Variables:
                     DYNAMODB_TABLE: !Ref GameStateTable
@@ -38,6 +40,8 @@ Resources:
             CodeUri: ./
             Handler: mafiaManageSlack.lambda_handler
             Policies: AmazonDynamoDBFullAccess
+            Layers:
+                - !Ref MafiaLayer
             Events:
                 SQSEvent:
                     Type: SQS
@@ -52,3 +56,11 @@ Resources:
                 Name: _id
                 Type: String
             TableName: gameState
+    MafiaLayer:
+        Type: AWS::Serverless::LayerVersion
+        Properties:
+            LayerName: mafia-layer
+            Description: boto3 and slack client dependencies
+            ContentUri: '.\mafia-app-layer.zip'
+            CompatibleRuntimes:
+                - python3.8

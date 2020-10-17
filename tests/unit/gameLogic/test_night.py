@@ -1,7 +1,7 @@
 import pytest
 from models.gameState import Game, States as GameStates
 from models.player import Player, Roles, States as PlayerStates
-from stateManagers.gameStateManager import GameStateManager, Actions
+from stateManagers import getInstance, Actions
 from tests.unit.testHelpers import createVillager, createMafia
 
 def test_GameStateNight_MurderAction_StateIsDayPlayerDead():
@@ -10,7 +10,7 @@ def test_GameStateNight_MurderAction_StateIsDayPlayerDead():
     state = Game()
     state.state = GameStates.NIGHT
     state.players = [player, createVillager(), createVillager(), mafia]
-    systemUnderTest = GameStateManager(state)
+    systemUnderTest = getInstance(state)
 
     systemUnderTest.transition(Actions.MURDER, player.id, mafia.id)
 
@@ -23,7 +23,7 @@ def test_GameStateNight_MurderResultsInVillagerCountEqualingMafia_StateIsGameOve
     state = Game()
     state.state = GameStates.NIGHT
     state.players = [player, createVillager(), mafia]
-    systemUnderTest = GameStateManager(state)
+    systemUnderTest = getInstance(state)
 
     systemUnderTest.transition(Actions.MURDER, player.id, mafia.id)
 
@@ -38,7 +38,7 @@ def test_MultipleMafiaMembers_MustAgreeOnWhoToKill():
     state = Game()
     state.state = GameStates.NIGHT
     state.players = [player1, player2, createVillager(), createVillager(), mafia1, mafia2]
-    systemUnderTest = GameStateManager(state)
+    systemUnderTest = getInstance(state)
     #mafia 1 wants to kill player 1
     systemUnderTest.transition(Actions.MURDER, player1.id, mafia1.id)
 
@@ -65,7 +65,7 @@ def test_VillagerCanNotMurder():
     state = Game()
     state.state = GameStates.NIGHT
     state.players = [player1, player2, mafia]
-    systemUnderTest = GameStateManager(state)
+    systemUnderTest = getInstance(state)
 
     systemUnderTest.transition(Actions.MURDER, player2.id, player1.id)
 

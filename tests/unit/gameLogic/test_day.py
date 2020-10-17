@@ -1,13 +1,13 @@
 import pytest
 from models.gameState import Game, States as GameStates
 from models.player import Player, States as PlayerStates
-from stateManagers.gameStateManager import GameStateManager, Actions
+from stateManagers import getInstance, Actions
 from tests.unit.testHelpers import createVillager
 
 def test_GameStateDay_TwoAccuseActions_StateIsTrialPlayerIsOnTrial():
     state = Game()
     state.state = GameStates.DAY
-    systemUnderTest = GameStateManager(state)
+    systemUnderTest = getInstance(state)
     accused = createVillager('test')
     p1 = createVillager('p1')
     p2 = createVillager('p2')
@@ -22,7 +22,7 @@ def test_GameStateDay_TwoAccuseActions_StateIsTrialPlayerIsOnTrial():
 def test_GameStateDay_OneAccuseAction_StateIsStillDay():
     state = Game()
     state.state = GameStates.DAY
-    systemUnderTest = GameStateManager(state)
+    systemUnderTest = getInstance(state)
     accused = createVillager('test')
     p1 = createVillager('p1')
     p2 = createVillager('p2')
@@ -36,7 +36,7 @@ def test_GameStateDay_OneAccuseAction_StateIsStillDay():
 def test_CanNotAccuseDeadPerson():
     state = Game()
     state.state = GameStates.DAY
-    systemUnderTest = GameStateManager(state)
+    systemUnderTest = getInstance(state)
     dead_player = createVillager('test')
     live_player = createVillager('v1')
     dead_player.state=PlayerStates.DEAD
@@ -50,7 +50,7 @@ def test_CanNotAccuseDeadPerson():
 def test_DeadManCanNotAccuse():
     state = Game()
     state.state = GameStates.DAY
-    systemUnderTest = GameStateManager(state)
+    systemUnderTest = getInstance(state)
     dead_player = createVillager('test')
     live_player = createVillager('v1')
     dead_player.state=PlayerStates.DEAD

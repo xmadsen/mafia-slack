@@ -2,13 +2,13 @@ import pytest
 import random
 from models.gameState import Game, States as GameStates
 from models.player import Player, Roles, States as PlayerStates
-from stateManagers.gameStateManager import GameStateManager, Actions
+from stateManagers import getInstance, Actions
 from tests.unit.testHelpers import createMafia, createVillager
 
 def test_GameStateTrial_FoundNotGuiltyAction_StateIsDayPlayerOnTrialIsAlive():
     state = Game()
     state.state = GameStates.TRIAL
-    systemUnderTest = GameStateManager(state)
+    systemUnderTest = getInstance(state)
     player = createVillager('test')
     villager1 = createVillager('v1')
     villager2 = createVillager('v2')
@@ -30,7 +30,7 @@ def test_GameStateTrial_FoundNotGuiltyAction_StateIsDayPlayerOnTrialIsAlive():
 def test_GameStateTrial_FoundGuiltyAction_StateIsNightPlayerOnTrialIsDead():
     state = Game()
     state.state = GameStates.TRIAL
-    systemUnderTest = GameStateManager(state)
+    systemUnderTest = getInstance(state)
     player = createVillager('test')
     villager1 = createVillager('v1')
     villager2 = createVillager('v2')
@@ -48,7 +48,7 @@ def test_GameStateTrial_FoundGuiltyAction_StateIsNightPlayerOnTrialIsDead():
 def test_GameStateTrial_LastMafiaMemberFoundGuilty_StateIsGameOver():
     state = Game()
     state.state = GameStates.TRIAL
-    systemUnderTest = GameStateManager(state)
+    systemUnderTest = getInstance(state)
     mafia = createMafia('test')
     villager1 = createVillager('v1')
     villager2 = createVillager('v2')
@@ -64,7 +64,7 @@ def test_GameStateTrial_LastMafiaMemberFoundGuilty_StateIsGameOver():
 def test_CanNotCastVoteIfDead():
     state = Game()
     state.state = GameStates.TRIAL
-    systemUnderTest = GameStateManager(state)
+    systemUnderTest = getInstance(state)
     mafia = createMafia('test')
     villager1 = createVillager('v1')
     villager2 = createVillager('v2')
@@ -78,7 +78,7 @@ def test_CanNotCastVoteIfDead():
 def test_CanNotCastVoteIfOnTrial():
     state = Game()
     state.state = GameStates.TRIAL
-    systemUnderTest = GameStateManager(state)
+    systemUnderTest = getInstance(state)
     mafia = createMafia('test')
     villager1 = createVillager('v1')
     villager2 = createVillager('v2')

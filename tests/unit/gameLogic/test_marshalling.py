@@ -2,14 +2,14 @@ import pytest
 import random
 from models.gameState import Game, States as GameStates
 from models.player import Player, Roles
-from stateManagers.gameStateManager import GameStateManager, Actions
+from stateManagers import getInstance, Actions
 from tests.unit.testHelpers import createVillager
 
 def test_GameStateMarshallingWithEnoughPlayers_GameStartAction_StateIsNight():
     state = Game()
     state.state = GameStates.MARSHALLING
     state.players = [Player(), Player(), Player(), Player()]
-    systemUnderTest = GameStateManager(state)
+    systemUnderTest = getInstance(state)
 
     success = systemUnderTest.transition(Actions.START_GAME)
 
@@ -20,7 +20,7 @@ def test_GameStateMarshallingWithoutEnoughPlayers_GameStartAction_StateIsMarshal
     state = Game()
     state.state = GameStates.MARSHALLING
     state.players = [Player(),Player(),Player()]
-    systemUnderTest = GameStateManager(state)
+    systemUnderTest = getInstance(state)
 
     success = systemUnderTest.transition(Actions.START_GAME)
 
@@ -34,7 +34,7 @@ def test_GameStateMarshallingWithEnoughPlayers_GameStartAction_PlayersAssignedRo
     state = Game()
     state.state = GameStates.MARSHALLING
     state.players = [Player() for x in range(num_players)]
-    systemUnderTest = GameStateManager(state)
+    systemUnderTest = getInstance(state)
 
     systemUnderTest.transition(Actions.START_GAME)
 
@@ -45,7 +45,7 @@ def test_GameStateMarshalling_AddPlayerAction_PlayerAdded():
     state = Game()
     p_id = 'test'
     state.state = GameStates.MARSHALLING
-    systemUnderTest = GameStateManager(state)
+    systemUnderTest = getInstance(state)
 
     success = systemUnderTest.transition(Actions.ADD_PLAYER, executor=p_id)
 
@@ -55,7 +55,7 @@ def test_GameStateMarshalling_AddPlayerAction_PlayerAdded():
 def test_GameStateMarshalling_RemovePlayerAction_PlayerRemoved():
     state = Game()
     state.state = GameStates.MARSHALLING
-    systemUnderTest = GameStateManager(state)
+    systemUnderTest = getInstance(state)
     player = createVillager('test')
     state.players = [player]
 
@@ -70,7 +70,7 @@ def test_GameStateMarshalling_AddPlayerWithDupeId_PlayerNotAdded():
     state = Game()
     p_id = 'test'
     state.state = GameStates.MARSHALLING
-    systemUnderTest = GameStateManager(state)
+    systemUnderTest = getInstance(state)
 
     systemUnderTest.transition(Actions.ADD_PLAYER, p_id)
     success = systemUnderTest.transition(Actions.ADD_PLAYER, p_id)

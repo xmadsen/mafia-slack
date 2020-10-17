@@ -10,18 +10,22 @@ def identify_player(gameState, id):
         return 'In truth, they were no criminal. An innocent villager has been killed.'
 def build_gameover_message(gameState):
     if gameState.determineWinner() == Roles.VILLAGER:
-        return 'The villagers have shown bravery and determination in their resistance to organized crime. The mafia will think twice before trying again. GAME OVER. The villagers win.'
+        message = 'The villagers have shown bravery and determination in their resistance to organized crime. The mafia will think twice before trying again. GAME OVER. The villagers win.'
     else:
-        return 'The mafia has made an example of this village. No longer will they resist the criminal empire. GAME OVER. The mafia wins.'
+        message = 'The mafia has made an example of this village. No longer will they resist the criminal empire. GAME OVER. The mafia wins.'
+    return message + '\n' + build_roster_message(gameState, True)
 
-def build_roster_message(gameState):
-    return 'Player\tState\n' + '\n'.join([f'<@{p.id}>\t{p.state}' for p in gameState.players])
+def build_roster_message(gameState, isGameOver = False):
+    if isGameOver:
+        return '\n'.join([f'<@{p.id}> is {p.state.lower()}. They were a {p.role.lower()}' for p in gameState.players])
+    else:
+        return '\n'.join([f'<@{p.id}> is {p.state.lower()}.' for p in gameState.players])
 
 def build_how_to_cast_vote_message():
-    return 'To vote guilty: /mafiaguilty\nto vote not guilty: /mafianotguilty'
+    return 'To vote guilty: /mafia vote-guilty\nto vote not guilty: /mafia vote-innocent'
 
 def build_how_to_accuse_message():
-    return 'To accuse or second an accusation: /mafiaaccuse @who-to-accuse'
+    return 'To accuse or second an accusation: /mafia accuse @who-to-accuse'
 
 def get_state_change_message(gameState, actionSuccess, action, executor=None, target = None):
     if action == Actions.ADD_PLAYER:

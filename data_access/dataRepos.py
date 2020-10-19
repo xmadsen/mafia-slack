@@ -1,11 +1,12 @@
 import boto3
 from models.gameState import Game, States
 from models.player import Player
+from util.env import getEnvVar
 
 class GameStateRepo(object):
     def __init__(self, dynamo_endpoint = None):
         dynamodb = boto3.resource('dynamodb')
-        self.table = dynamodb.Table('gameState')
+        self.table = dynamodb.Table(getEnvVar('DYNAMODB_TABLE'))
 
     def GetGameState(self, gameId):
         state =self.table.get_item(Key={'_id': gameId})

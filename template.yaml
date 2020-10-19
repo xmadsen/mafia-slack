@@ -4,6 +4,12 @@ Globals:
     Function:
         Runtime: python3.8
         Timeout: 180
+Parameters:
+    ClientId:
+        Type: String
+    ClientSecret:
+        Type: String
+
 Resources:
     SlackManagementQueue: 
         Type: AWS::SQS::Queue
@@ -42,6 +48,9 @@ Resources:
             Policies: AmazonDynamoDBFullAccess
             Layers:
                 - !Ref MafiaLayer
+            Environment:
+                Variables:
+                    TOKEN_SOURCE: !Ref TokenTable
             Events:
                 SQSEvent:
                     Type: SQS
@@ -49,6 +58,29 @@ Resources:
                         Queue: !GetAtt SlackManagementQueue.Arn
                         BatchSize: 10
                         Enabled: true
+    StoreTokenFunction:
+        Type: AWS::Serverless::Function
+        Properties:
+            FunctionName: MafiaTokenStore
+            Runtime: python3.8
+            CodeUri: ./
+            Handler: mafiaTokenStore.lambda_handler
+            Policies: AmazonDynamoDBFullAccess
+            Layers:
+                - !Ref MafiaLayer
+            Environment:
+                Variables:
+                    TOKEN_SOURCE: !Ref TokenTable
+                    APP_CLIENT_ID: 
+                        Ref: ClientId
+                    APP_CLIENT_SECRET:
+                        Ref: ClientSecret
+            Events:
+                MafiaToken:
+                    Type: Api 
+                    Properties:
+                        Path: /addtoslackredirect
+                        Method: get
     GameStateTable:
         Type: AWS::Serverless::SimpleTable
         Properties:
@@ -56,6 +88,13 @@ Resources:
                 Name: _id
                 Type: String
             TableName: gameState
+    TokenTable:
+        Type: AWS::Serverless::SimpleTable
+        Properties:
+            PrimaryKey: 
+                Name: _id
+                Type: String
+            TableName: mafiaTokens
     MafiaLayer:
         Type: AWS::Serverless::LayerVersion
         Properties:

@@ -1,4 +1,4 @@
-import json, os
+import json, os, boto3
 from slack import WebClient
 from slack.errors import SlackApiError
 from data_access.dataRepos import GameStateRepo
@@ -8,15 +8,24 @@ from models.gameState import States as GameStates
 from util.env import getEnvVar
 from util.game_message_builder import get_state_change_message
 
-API_TOKEN = getEnvVar('SLACK_API_TOKEN')
+TOKEN_SOURCE = getEnvVar('TOKEN_SOURCE')
+
+def getToken(id):
+    dynamodb = boto3.resource('dynamodb')
+    tokenStore = dynamodb.Table(TOKEN_SOURCE)
+    result = tokenStore.get_item(Key={'_id': id})
+    print(f'Getting token for {id}')
+    if 'Item' in result:
+        return result['Item']['token']
 
 def processRecords(recoredList):
-    client = WebClient(token=API_TOKEN)
     repo = GameStateRepo()
     for r in recoredList:
         try:
             body = json.loads(r['body'])
             state = repo._deserializeGame(body['state'])
+            token = getToken(state.id)
+            client = WebClient(token=token)
             action = body['action']
             sourcePlayer = body['source']
             targetPlayer = body['target']

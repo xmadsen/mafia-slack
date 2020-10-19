@@ -1,5 +1,5 @@
 # mafia-slack
-![Build Status](https://codebuild.us-east-1.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoiR2JPVk1vbEZ6aXFSM2JYSGpUcGF5TzVxQytUbHFjSnc3N3JrY2U3K2Y5NVpKNlBqRENPUDhXRXlGelhVdkJZL2lmTVNTd2FVU0prRjZCVmkzTTNMYmtJPSIsIml2UGFyYW1ldGVyU3BlYyI6Im14T20wWksxaTVTdUtlRTQiLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=master)
+[![Add To Slack](https://platform.slack-edge.com/img/add_to_slack.png)](https://slack.com/oauth/v2/authorize?scope=chat:write,commands,groups:write,groups:read&client_id=295285222965.1231423698087&redirect_uri=https://p6ew7pnsna.execute-api.us-east-1.amazonaws.com/Prod/addtoslackredirect)
 ## Game State Machine
 ### States and actions
 - Marshalling

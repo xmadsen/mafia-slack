@@ -1,6 +1,8 @@
 from stateManagers.gameStateManager import Actions
 from models.player import Roles
 from models.gameState import States
+from util.constants import Emoji
+
 
 def identify_player(gameState, id):
     player = gameState.findPlayerWithId(id)
@@ -8,6 +10,8 @@ def identify_player(gameState, id):
         return 'Justice prevails! A member of the mafia has been rooted out.'
     if player.role == Roles.VILLAGER:
         return 'In truth, they were no criminal. An innocent villager has been killed.'
+
+
 def build_gameover_message(gameState):
     if gameState.determineWinner() == Roles.VILLAGER:
         message = 'The villagers have shown bravery and determination in their resistance to organized crime. The mafia will think twice before trying again. GAME OVER. The villagers win.'
@@ -15,19 +19,32 @@ def build_gameover_message(gameState):
         message = 'The mafia has made an example of this village. No longer will they resist the criminal empire. GAME OVER. The mafia wins.'
     return message + '\n' + build_roster_message(gameState, True)
 
-def build_roster_message(gameState, isGameOver = False):
+
+def role_emoji(role):
+    return Emoji.mafia if role == Roles.MAFIA else Emoji.villager
+
+
+def build_roster_message(gameState, isGameOver=False):
     if isGameOver:
-        return '\n'.join([f'<@{p.id}> is {p.state.lower()}. They were a {p.role.lower()}' for p in gameState.players])
+        roster_message = f''
+        for p in gameState.players:
+            roster_message += f'{role_emoji(p.role)}  {p.role.capitalize()} | <@{p.id}>\n'
+
+        return roster_message
+
     else:
         return '\n'.join([f'<@{p.id}> is {p.state.lower()}.' for p in gameState.players])
+
 
 def build_how_to_cast_vote_message():
     return 'To vote guilty: /mafia vote-guilty\nto vote not guilty: /mafia vote-innocent'
 
+
 def build_how_to_accuse_message():
     return 'To accuse or second an accusation: /mafia accuse @who-to-accuse'
 
-def get_state_change_message(gameState, actionSuccess, action, executor=None, target = None):
+
+def get_state_change_message(gameState, actionSuccess, action, executor=None, target=None):
     if action == Actions.ADD_PLAYER:
         if actionSuccess:
             return f'<@{executor}> has joined the game!'
@@ -56,7 +73,7 @@ def get_state_change_message(gameState, actionSuccess, action, executor=None, ta
         else:
             return 'Hit attempt failed. Either this person does not exist or they are a member of the mafia and are under protection. Make sure you are tagging your target with @'
     elif action == Actions.ACCUSE:
-        if actionSuccess and gameState.state==States.TRIAL:
+        if actionSuccess and gameState.state == States.TRIAL:
             return f'The charge against <@{target}> has been seconded by <@{executor}>. In accordance with the village by-laws they now stand before a jury of their peers. The penalty for guilt is... DEATH. Will you vote guilty or not guilty?\n{build_how_to_cast_vote_message()}'
         elif actionSuccess:
             return f'<@{target}> has been formally accused of being a member of the mafia by <@{executor}>. This is a serious accusation and before they stand trial it must be seconded!\n{build_how_to_accuse_message()}'

@@ -2,6 +2,7 @@ from util.game_message_builder import get_state_change_message, build_roster_mes
 from stateManagers.gameStateManager import Actions
 from models.gameState import Game, States
 from models.player import Player, Roles
+from models.player import States as PlayerStates
 
 
 def test_addPlayerSuccess():
@@ -62,19 +63,45 @@ def test_playerMurderedSuccess():
     assert message == f"Another beautiful morning! One that <@{p_id}> won't get to experience, for they are dead! Murdered in the night! One among you is the culprit!\n{build_how_to_accuse_message()}"
 
 
-def test_GameOverRoster():
+def test_RosterGameOver():
     game = Game()
-    game.tsate = States.DAY
     game.players = [Player(id="Xander Mafioso", role=Roles.MAFIA),
                     Player(id="Fionna the Human", role=Roles.VILLAGER),
-                    Player(id="Chloe the Vilager", role=Roles.VILLAGER),
-                    Player(id="DJ LC", role=Roles.VILLAGER),
-                    Player(id="Louise the Dog", role=Roles.VILLAGER)
+                    Player(id="Alexander Jackson", role=Roles.VILLAGER),
+                    Player(id="Chloe the Vilager",
+                           role=Roles.VILLAGER, state=PlayerStates.DEAD),
+                    Player(id="Robert Redford", role=Roles.VILLAGER,
+                           state=PlayerStates.DEAD),
+                    Player(id="Don Corleone", role=Roles.MAFIA,
+                           state=PlayerStates.DEAD)
                     ]
 
     assert build_roster_message(game, isGameOver=True) ==\
-        ": japanese_goblin:  Mafia | <@Xander Mafioso>\n"\
-        ": astonished:  Villager | <@Fionna the Human>\n"\
-        ": astonished:  Villager | <@Chloe the Vilager>\n"\
-        ": astonished:  Villager | <@DJ LC>\n"\
-        ": astonished:  Villager | <@Louise the Dog>\n"
+        ": japanese_goblin:  Mafia | : simple_smile:  Alive | <@Xander Mafioso>\n"\
+        ": astonished:  Villager | : simple_smile:  Alive | <@Fionna the Human>\n"\
+        ": astonished:  Villager | : simple_smile:  Alive | <@Alexander Jackson>\n"\
+        ": astonished:  Villager | : skull:  Dead | <@Chloe the Vilager>\n"\
+        ": astonished:  Villager | : skull:  Dead | <@Robert Redford>\n"\
+        ": japanese_goblin:  Mafia | : skull:  Dead | <@Don Corleone>\n"
+
+
+def test_RosterNotGameOver():
+    game = Game()
+    game.players = [Player(id="Xander Mafioso", role=Roles.MAFIA),
+                    Player(id="Fionna the Human", role=Roles.VILLAGER),
+                    Player(id="Alexander Jackson", role=Roles.VILLAGER),
+                    Player(id="Chloe the Vilager",
+                           role=Roles.VILLAGER, state=PlayerStates.DEAD),
+                    Player(id="Robert Redford", role=Roles.VILLAGER,
+                           state=PlayerStates.DEAD),
+                    Player(id="Don Corleone", role=Roles.MAFIA,
+                           state=PlayerStates.DEAD)
+                    ]
+
+    assert build_roster_message(game, isGameOver=False) ==\
+        ": simple_smile:  Alive | <@Xander Mafioso>\n"\
+        ": simple_smile:  Alive | <@Fionna the Human>\n"\
+        ": simple_smile:  Alive | <@Alexander Jackson>\n"\
+        ": skull:  Dead | <@Chloe the Vilager>\n"\
+        ": skull:  Dead | <@Robert Redford>\n"\
+        ": skull:  Dead | <@Don Corleone>\n"

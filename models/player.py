@@ -12,9 +12,9 @@ class States:
 
 
 class Player(object):
-    def __init__(self, id=None, role=Roles.NONE):
+    def __init__(self, id=None, role=Roles.NONE, state=States.ALIVE):
         self.role = role
-        self.state = States.ALIVE
+        self.state = state
         self.id = id
         self.vote = None
 

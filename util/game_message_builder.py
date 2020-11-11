@@ -1,5 +1,6 @@
 from stateManagers.gameStateManager import Actions
 from models.player import Roles
+from models.player import States as PlayerStates
 from models.gameState import States
 from util.constants import Emoji
 
@@ -24,16 +25,18 @@ def role_emoji(role):
     return Emoji.mafia if role == Roles.MAFIA else Emoji.villager
 
 
+def state_emoji(state):
+    return Emoji.alive if state == PlayerStates.ALIVE else Emoji.dead
+
+
 def build_roster_message(gameState, isGameOver=False):
-    if isGameOver:
-        roster_message = f''
-        for p in gameState.players:
-            roster_message += f'{role_emoji(p.role)}  {p.role.capitalize()} | <@{p.id}>\n'
+    roster_message = ''
+    for p in gameState.players:
+        if isGameOver:
+            roster_message += f'{role_emoji(p.role)}  {p.role.capitalize()} | '
+        roster_message += f'{state_emoji(p.state)}  {p.state.capitalize()} | <@{p.id}>\n'
 
-        return roster_message
-
-    else:
-        return '\n'.join([f'<@{p.id}> is {p.state.lower()}.' for p in gameState.players])
+    return roster_message
 
 
 def build_how_to_cast_vote_message():

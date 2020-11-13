@@ -33,7 +33,7 @@ def build_roster_message(gameState, isGameOver=False):
     roster_message = ''
     for p in gameState.players:
         if isGameOver:
-            roster_message += f'{role_emoji(p.role)}  {p.role.capitalize()} | '
+            roster_message += f'{role_emoji(p.role)}  {p.role.capitalize()} {"   " if p.role == Roles.MAFIA else ""}| '
         roster_message += f'{state_emoji(p.state)}  {p.state.capitalize()} | <@{p.id}>\n'
 
     return roster_message

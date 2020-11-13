@@ -77,12 +77,12 @@ def test_RosterGameOver():
                     ]
 
     assert build_roster_message(game, isGameOver=True) ==\
-        ": japanese_goblin:  Mafia | : simple_smile:  Alive | <@Xander Mafioso>\n"\
-        ": astonished:  Villager | : simple_smile:  Alive | <@Fionna the Human>\n"\
-        ": astonished:  Villager | : simple_smile:  Alive | <@Alexander Jackson>\n"\
-        ": astonished:  Villager | : skull:  Dead | <@Chloe the Vilager>\n"\
-        ": astonished:  Villager | : skull:  Dead | <@Robert Redford>\n"\
-        ": japanese_goblin:  Mafia | : skull:  Dead | <@Don Corleone>\n"
+        ":japanese_goblin:  Mafia    | :simple_smile:  Alive | <@Xander Mafioso>\n"\
+        ":astonished:  Villager | :simple_smile:  Alive | <@Fionna the Human>\n"\
+        ":astonished:  Villager | :simple_smile:  Alive | <@Alexander Jackson>\n"\
+        ":astonished:  Villager | :skull:  Dead | <@Chloe the Vilager>\n"\
+        ":astonished:  Villager | :skull:  Dead | <@Robert Redford>\n"\
+        ":japanese_goblin:  Mafia    | :skull:  Dead | <@Don Corleone>\n"
 
 
 def test_RosterNotGameOver():
@@ -99,9 +99,9 @@ def test_RosterNotGameOver():
                     ]
 
     assert build_roster_message(game, isGameOver=False) ==\
-        ": simple_smile:  Alive | <@Xander Mafioso>\n"\
-        ": simple_smile:  Alive | <@Fionna the Human>\n"\
-        ": simple_smile:  Alive | <@Alexander Jackson>\n"\
-        ": skull:  Dead | <@Chloe the Vilager>\n"\
-        ": skull:  Dead | <@Robert Redford>\n"\
-        ": skull:  Dead | <@Don Corleone>\n"
+        ":simple_smile:  Alive | <@Xander Mafioso>\n"\
+        ":simple_smile:  Alive | <@Fionna the Human>\n"\
+        ":simple_smile:  Alive | <@Alexander Jackson>\n"\
+        ":skull:  Dead | <@Chloe the Vilager>\n"\
+        ":skull:  Dead | <@Robert Redford>\n"\
+        ":skull:  Dead | <@Don Corleone>\n"

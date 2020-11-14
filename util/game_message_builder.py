@@ -50,7 +50,7 @@ def build_how_to_accuse_message():
 def get_state_change_message(gameState, actionSuccess, action, executor=None, target=None):
     if action == Actions.ADD_PLAYER:
         if actionSuccess:
-            return f'<@{executor}> has joined the game!'
+            return f'<@{executor}> has joined the game! {len(gameState.players)} players have joined!'
         elif executor in [p.id for p in gameState.players]:
             return "You can't join if you're already in."
         elif gameState.state != States.MARSHALLING:

@@ -7,9 +7,11 @@ from models.player import States as PlayerStates
 
 def test_addPlayerSuccess():
     p_id = "test"
-    message = get_state_change_message({}, True, Actions.ADD_PLAYER, p_id)
+    game = Game()
+    game.players.append(Player(p_id))
+    message = get_state_change_message(game, True, Actions.ADD_PLAYER, p_id)
 
-    assert message == f"<@{p_id}> has joined the game!"
+    assert message == f"<@{p_id}> has joined the game! {len(game.players)} players have joined!"
 
 
 def test_addPlayerFailure_AlreadyJoined():

@@ -2,6 +2,7 @@ from stateManagers.gameStateManager import GameStateManager, Actions
 from models.player import States as PlayerStates
 from models.gameState import States as GameStates
 
+
 class TrialStateManager(GameStateManager):
     def _transitionFromState(self, action, data, executor):
         accused = self.gameState.findPlayerOnTrial()
@@ -23,7 +24,7 @@ class TrialStateManager(GameStateManager):
         print(f'{votes_to_convict} votes to convict')
         if votes_to_acquit + votes_to_convict == jury_count:
             if votes_to_acquit >= votes_to_convict:
-                accused.state=PlayerStates.ALIVE
+                accused.state = PlayerStates.ALIVE
                 self.gameState.state = GameStates.DAY
             else:
                 accused.state = PlayerStates.DEAD

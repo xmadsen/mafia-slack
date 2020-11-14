@@ -4,6 +4,7 @@ from models.player import Player, States as PlayerStates
 from stateManagers import getInstance, Actions
 from tests.unit.testHelpers import createVillager
 
+
 def test_GameStateDay_TwoAccuseActions_StateIsTrialPlayerIsOnTrial():
     state = Game()
     state.state = GameStates.DAY
@@ -19,6 +20,7 @@ def test_GameStateDay_TwoAccuseActions_StateIsTrialPlayerIsOnTrial():
     assert state.state == GameStates.TRIAL
     assert accused.state == PlayerStates.ON_TRIAL
 
+
 def test_GameStateDay_OneAccuseAction_StateIsStillDay():
     state = Game()
     state.state = GameStates.DAY
@@ -33,19 +35,22 @@ def test_GameStateDay_OneAccuseAction_StateIsStillDay():
     assert state.state == GameStates.DAY
     assert accused.state == PlayerStates.ALIVE
 
+
 def test_CanNotAccuseDeadPerson():
     state = Game()
     state.state = GameStates.DAY
     systemUnderTest = getInstance(state)
     dead_player = createVillager('test')
     live_player = createVillager('v1')
-    dead_player.state=PlayerStates.DEAD
-    state.players = [dead_player,live_player]
+    dead_player.state = PlayerStates.DEAD
+    state.players = [dead_player, live_player]
 
-    result = systemUnderTest.transition(Actions.ACCUSE, dead_player.id, live_player.id)
+    result = systemUnderTest.transition(
+        Actions.ACCUSE, dead_player.id, live_player.id)
 
     assert state.state == GameStates.DAY
     assert result == False
+
 
 def test_DeadManCanNotAccuse():
     state = Game()
@@ -53,10 +58,11 @@ def test_DeadManCanNotAccuse():
     systemUnderTest = getInstance(state)
     dead_player = createVillager('test')
     live_player = createVillager('v1')
-    dead_player.state=PlayerStates.DEAD
+    dead_player.state = PlayerStates.DEAD
     state.players = [dead_player, live_player]
 
-    result = systemUnderTest.transition(Actions.ACCUSE, live_player.id, dead_player.id)
+    result = systemUnderTest.transition(
+        Actions.ACCUSE, live_player.id, dead_player.id)
 
     assert state.state == GameStates.DAY
     assert result == False

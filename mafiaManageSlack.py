@@ -8,7 +8,8 @@ from stateManagers.gameStateManager import Actions
 from models.player import Roles
 from models.gameState import States as GameStates
 from util.env import getEnvVar
-from util.game_message_builder import get_state_change_message
+from util.game_message_builder import (
+    get_state_change_message, get_blocks_for_message)
 
 TOKEN_SOURCE = getEnvVar('TOKEN_SOURCE')
 
@@ -22,9 +23,9 @@ def getToken(id):
         return result['Item']['token']
 
 
-def processRecords(recoredList):
+def processRecords(record_list):
     repo = GameStateRepo()
-    for r in recoredList:
+    for r in record_list:
         try:
             body = json.loads(r['body'])
             state = repo._deserializeGame(body['state'])
@@ -34,9 +35,10 @@ def processRecords(recoredList):
             sourcePlayer = body['source']
             targetPlayer = body['target']
             mainChannel = state.meta['channel_id']
-            message = get_state_change_message(
+            message, header = get_state_change_message(
                 state, True, action, sourcePlayer, targetPlayer)
-            client.chat_postMessage(channel=mainChannel, text=message)
+            blocks = get_blocks_for_message(message, header)
+            client.chat_postMessage(channel=mainChannel, blocks=blocks)
             if action == Actions.START_GAME:
                 # create a private channel for the mafia
                 mafiaMembers = ','.join(

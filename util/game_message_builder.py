@@ -67,12 +67,12 @@ def build_roster_message(gameState, isGameOver=False):
 
 
 def build_how_to_cast_vote_message():
-    return 'To vote guilty: /mafia vote-guilty\nto vote not guilty: '\
-        '/mafia vote-innocent'
+    return 'To vote guilty: ```/mafia vote-guilty```\nTo vote not guilty: '\
+        '```/mafia vote-innocent```'
 
 
 def build_how_to_accuse_message():
-    return 'To accuse or second an accusation: /mafia accuse @who-to-accuse'
+    return 'To accuse or second an accusation: ```/mafia accuse @who-to-accuse```'
 
 
 def get_state_change_message(gameState, actionSuccess, action, executor=None,

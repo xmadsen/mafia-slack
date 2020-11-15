@@ -79,6 +79,7 @@ def test_playerMurderedSuccess():
         game, True, Actions.MURDER, target=p_id)
     assert message == f"Another beautiful morning! One that <@{p_id}> won't get to experience, for they are dead! Murdered in the night! One among you is the culprit!\n{build_how_to_accuse_message()}"
     assert header == Header.MORNING
+    print(get_blocks_for_message(message, header))
 
 
 def test_RosterGameOver():

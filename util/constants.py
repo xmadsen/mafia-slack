@@ -17,3 +17,4 @@ class Header:
     TRIAL = ":female-judge::skin-tone-4: :male-judge::skin-tone-2: Trial"\
         " :male-judge::skin-tone-5: :female-judge::skin-tone-3:"
     PLAYER_LEFT = ":leftwards_arrow_with_hook: Player Left! :leftwards_arrow_with_hook:"
+    MAFIA_ONLY = ":dagger_knife::japanese_goblin: Mafia Chat :smiling_imp::skull_and_crossbones:"

@@ -22,9 +22,9 @@ def getToken(id):
         return result['Item']['token']
 
 
-def processRecords(recoredList):
+def processRecords(recordList):
     repo = GameStateRepo()
-    for r in recoredList:
+    for r in recordList:
         try:
             body = json.loads(r['body'])
             state = repo._deserializeGame(body['state'])
@@ -67,10 +67,10 @@ def processRecords(recoredList):
                 # clean up the mafia channel and archive it
                 mafia_channel = state.meta['mafia_channel']
                 for player_id in [p.id for p in state.players if p.role == Roles.MAFIA]:
-                    print(f'kicking {player_id}')
+                    print(f'kicking {player_id} from mafia channel')
                     client.conversations_kick(
                         channel=mafia_channel, user=player_id)
-
+                    
                 print(f'archiving channel {mafia_channel}')
                 client.conversations_archive(channel=mafia_channel)
         except SlackApiError as e:

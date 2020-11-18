@@ -72,19 +72,19 @@ def get_state_change_message(gameState, actionSuccess, action, executor=None,
             return "The game has started. You can't leave now!"
     elif action == Actions.START_GAME:
         if actionSuccess:
-            return f"The game is starting now! If you are in the mafia you '\
-            'will be notified...\n\nNight falls on the village. It is '\
-            'peaceful here, but not for long. The mafia is up to '\
-            'something.\n{build_roster_message(gameState)}"
+            return 'The game is starting now! If you are in the mafia you '\
+                'will be notified...\n\nNight falls on the village. It is '\
+                'peaceful here, but not for long. The mafia is up to '\
+                f"something.\n{build_roster_message(gameState)}"
         else:
             return "The game can't start with less than 4 players!"
     elif action == Actions.MURDER:
         if actionSuccess:
             if gameState.state == States.DAY:
-                return f"Another beautiful morning! One that <@{target}> '\
-                'won' t get to experience, for they are dead!Murdered in the '\
-                ' night! One among you is the culprit!\n'\
-                '{build_how_to_accuse_message()}"
+                return f"Another beautiful morning! One that <@{target}> "\
+                    'won\'t get to experience, for they are dead! Murdered in'\
+                    ' the night! One among you is the culprit!\n'\
+                    f"{build_how_to_accuse_message()}"
             elif gameState.state == States.GAME_OVER:
                 return f'<@{target}> is found dead in the morning. '\
                     f'{build_gameover_message(gameState)}'

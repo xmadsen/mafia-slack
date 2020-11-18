@@ -15,7 +15,8 @@ class Game(object):
         self.state = States.MARSHALLING
         self.players = []
         self.meta = None
-        # store the last player who was accused of being in the mafia by the villagers
+        # store the last player who was accused of being in the mafia by the
+        # villagers
         self.last_accused = None
 
     def findPlayerWithId(self, id):

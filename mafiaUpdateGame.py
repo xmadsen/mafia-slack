@@ -69,7 +69,7 @@ def lambda_handler(event, context):
         }
     elif action == NEW_GAME:
         state = gameRepo.CreateNewGame(game_id, {'channel_id': channel_id})
-        if state == None:
+        if state is None:
             response_type = 'ephemeral'
             message = json.dumps('Game already exists.')
         else:
@@ -88,7 +88,7 @@ def lambda_handler(event, context):
         }
     else:
         gameState = gameRepo.GetGameState(game_id)
-        if gameState == None:
+        if gameState is None:
             return None
         manager = getInstance(gameState)
         success = manager.transition(
@@ -136,7 +136,7 @@ def extractParameters(event):
 
     if 'text' in slack_event:
         args = extract_user_id(slack_event['text'])
-        if action == None:
+        if action is None:
             split_text = slack_event['text'].split('+')
             action = convert_to_action(split_text[0].upper())
 

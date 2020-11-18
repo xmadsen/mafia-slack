@@ -72,7 +72,8 @@ def processRecords(record_list):
             elif state.state == GameStates.GAME_OVER:
                 # clean up the mafia channel and archive it
                 mafia_channel = state.meta['mafia_channel']
-                for player_id in [p.id for p in state.players if p.role == Roles.MAFIA]:
+                for player_id in [
+                        p.id for p in state.players if p.role == Roles.MAFIA]:
                     print(f'kicking {player_id}')
                     client.conversations_kick(
                         channel=mafia_channel, user=player_id)

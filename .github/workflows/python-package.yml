@@ -3,13 +3,7 @@
 
 name: Format & Test
 
-on:
-  push:
-    branches: 
-      - '*'
-  pull_request:
-    branches: 
-      - '*'
+on: push
 
 jobs:
   autopep8:

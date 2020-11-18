@@ -13,7 +13,7 @@ class MarshallingStateManager(GameStateManager):
                 return True
         elif action == Actions.ADD_PLAYER:
             p = Player(executor)
-            if self.gameState.findPlayerWithId(executor) == None:
+            if self.gameState.findPlayerWithId(executor) is None:
                 self.gameState.players.append(p)
                 return True
         elif action == Actions.REMOVE_PLAYER:

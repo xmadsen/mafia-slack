@@ -7,6 +7,6 @@ def parse_payload(raw_args):
 
 def extract_user_id(input):
     '''extract the user id from an @tag'''
-    m = re.search('%3C%40(\w+)%7C', input)
+    m = re.search(r'%3C%40(\w+)%7C', input)
     if m:
         return m[1]

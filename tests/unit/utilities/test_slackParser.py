@@ -1,5 +1,6 @@
 from util.slack_payload_parser import parse_payload
 
+
 def test_convertDelimitedParamsIntoDict():
     raw_args = 'token=testToken&team_id=testId&team_domain=testDomain&channel_id=testChannel&channel_name=privategroup'
     parsed_args = parse_payload(raw_args)

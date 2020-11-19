@@ -5,6 +5,7 @@ from stateManagers.nightStateManager import NightStateManager
 from stateManagers.trialStateManager import TrialStateManager
 from models.gameState import States as GameStates
 
+
 def getInstance(gameState):
     if gameState.state == GameStates.MARSHALLING:
         return MarshallingStateManager(gameState)

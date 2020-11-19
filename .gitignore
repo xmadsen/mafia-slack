@@ -250,3 +250,4 @@ bin
 lib
 pyvenv.cfg
 setup.cfg
+.vscode

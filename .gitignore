@@ -246,3 +246,7 @@ $RECYCLE.BIN/
 samconfig.toml
 *.zip
 *.toml
+bin
+lib
+pyvenv.cfg
+setup.cfg

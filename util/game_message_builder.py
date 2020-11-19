@@ -47,7 +47,12 @@ def build_how_to_accuse_message():
     return 'To accuse or second an accusation: /mafia accuse @who-to-accuse'
 
 
-def get_state_change_message(gameState, actionSuccess, action, executor=None, target=None):
+def get_state_change_message(
+        gameState,
+        actionSuccess,
+        action,
+        executor=None,
+        target=None):
     if action == Actions.ADD_PLAYER:
         if actionSuccess:
             return f'<@{executor}> has joined the game! {len(gameState.players)} players have joined!'

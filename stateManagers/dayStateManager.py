@@ -2,6 +2,7 @@ from stateManagers.gameStateManager import GameStateManager, Actions
 from models.player import States as PlayerStates
 from models.gameState import States as GameStates
 
+
 class DayStateManager(GameStateManager):
     def _transitionFromState(self, action, data, executor):
         if action == Actions.ACCUSE:

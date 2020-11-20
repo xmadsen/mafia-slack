@@ -79,7 +79,7 @@ def get_state_change_message(gameState, actionSuccess, action, executor=None,
                              target=None):
     if action == Actions.ADD_PLAYER:
         if actionSuccess:
-            message = f'<@{executor}> has joined the game!'
+            message = f'<@{executor}> has joined the game! {len(gameState.players)} players have joined!'
             header = Header.SETUP
         elif executor in [p.id for p in gameState.players]:
             message = "You can't join if you're already in."

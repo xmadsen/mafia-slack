@@ -8,8 +8,6 @@ from util.slack_payload_parser import parse_payload, extract_user_id
 from util.game_message_builder import get_state_change_message
 from util.env import getEnvVar
 
-QUEUE_URL = getEnvVar('QUEUE_URL')
-
 HELP = 'help'
 NEW_GAME = 'new'
 action_table = {
@@ -26,7 +24,7 @@ action_table = {
 
 def updateSlack(state, action, executor, target):
     client = boto3.client('sqs')
-    client.send_message(QueueUrl=QUEUE_URL, MessageBody=json.dumps(
+    client.send_message(QueueUrl=getEnvVar('QUEUE_URL'), MessageBody=json.dumps(
         {'state': state, 'action': action, 'source': executor, 'target': target}))
 
 

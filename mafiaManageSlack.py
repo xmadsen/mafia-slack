@@ -12,12 +12,11 @@ from util.constants import Header
 from util.game_message_builder import (
     get_state_change_message, get_blocks_for_message)
 
-TOKEN_SOURCE = getEnvVar('TOKEN_SOURCE')
 
 
 def getToken(id):
     dynamodb = boto3.resource('dynamodb')
-    tokenStore = dynamodb.Table(TOKEN_SOURCE)
+    tokenStore = dynamodb.Table(getEnvVar('TOKEN_SOURCE'))
     result = tokenStore.get_item(Key={'_id': id})
     print(f'Getting token for {id}')
     if 'Item' in result:
@@ -73,10 +72,10 @@ def processRecords(record_list):
                 # clean up the mafia channel and archive it
                 mafia_channel = state.meta['mafia_channel']
                 for player_id in [p.id for p in state.players if p.role == Roles.MAFIA]:
-                    print(f'kicking {player_id}')
+                    print(f'kicking {player_id} from mafia channel')
                     client.conversations_kick(
                         channel=mafia_channel, user=player_id)
-
+                    
                 print(f'archiving channel {mafia_channel}')
                 client.conversations_archive(channel=mafia_channel)
         except SlackApiError as e:

@@ -246,3 +246,6 @@ $RECYCLE.BIN/
 samconfig.toml
 *.zip
 *.toml
+
+bin/*
+.vscode/settings.json

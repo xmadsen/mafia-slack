@@ -2,7 +2,7 @@ from stateManagers.gameStateManager import Actions
 from models.player import Roles
 from models.player import States as PlayerStates
 from models.gameState import States
-from util.constants import Emoji
+from util.constants import Emoji, Header
 
 
 def identify_player(gameState, id):
@@ -12,6 +12,27 @@ def identify_player(gameState, id):
     if player.role == Roles.VILLAGER:
         return 'In truth, they were no criminal. An innocent villager has '\
             'been killed.'
+
+
+def get_blocks_for_message(message, header):
+    blocks = [{
+        "type": "header",
+        "text": {
+            "type": "plain_text",
+            "text": header,
+            "emoji": True
+        }
+    }]
+
+    message_section = {
+        "type": "section",
+        "text": {
+            "type": "mrkdwn",
+            "text": message
+        }
+    }
+    blocks.append(message_section)
+    return blocks
 
 
 def build_gameover_message(gameState):
@@ -46,77 +67,97 @@ def build_roster_message(gameState, isGameOver=False):
 
 
 def build_how_to_cast_vote_message():
-    return 'To vote guilty: /mafia vote-guilty\nto vote not guilty: '\
-        '/mafia vote-innocent'
+    return 'To vote guilty: ```/mafia vote-guilty```\nTo vote not guilty: '\
+        '```/mafia vote-innocent```'
 
 
 def build_how_to_accuse_message():
-    return 'To accuse or second an accusation: /mafia accuse @who-to-accuse'
+    return 'To accuse or second an accusation: ```/mafia accuse @who-to-accuse```'
 
 
 def get_state_change_message(gameState, actionSuccess, action, executor=None,
                              target=None):
     if action == Actions.ADD_PLAYER:
         if actionSuccess:
-            return f'<@{executor}> has joined the game! {len(gameState.players)} players have joined!'
+            message = f'<@{executor}> has joined the game! {len(gameState.players)} players have joined!'
+            header = Header.SETUP
         elif executor in [p.id for p in gameState.players]:
-            return "You can't join if you're already in."
+            message = "You can't join if you're already in."
+            header = Header.ERROR
         elif gameState.state != States.MARSHALLING:
-            return "The game has started. Maybe next time."
+            message = "The game has started. Maybe next time."
+            header = Header.ERROR
         else:
-            return "Something is wrong. You can't join the game."
+            message = "Something is wrong. You can't join the game."
+            header = Header.ERROR
     elif action == Actions.REMOVE_PLAYER:
         if actionSuccess:
-            return f'<@{executor}> has left the game!'
+            message = f'<@{executor}> has left the game!'
+            header = Header.PLAYER_LEFT
         elif gameState.state != States.MARSHALLING:
-            return "The game has started. You can't leave now!"
+            message = "The game has started. You can't leave now!"
+            header = Header.ERROR
     elif action == Actions.START_GAME:
         if actionSuccess:
-            return 'The game is starting now! If you are in the mafia you '\
+            message = f'The game is starting now! If you are in the mafia you '\
                 'will be notified...\n\nNight falls on the village. It is '\
                 'peaceful here, but not for long. The mafia is up to '\
-                f"something.\n{build_roster_message(gameState)}"
+                f'something.\n{build_roster_message(gameState)}'
+            header = Header.NIGHT
         else:
-            return "The game can't start with less than 4 players!"
+            message = "The game can't start with less than 4 players!"
+            header = Header.ERROR
     elif action == Actions.MURDER:
         if actionSuccess:
             if gameState.state == States.DAY:
-                return f"Another beautiful morning! One that <@{target}> "\
+                message = f'Another beautiful morning! One that <@{target}> '\
                     'won\'t get to experience, for they are dead! Murdered in'\
                     ' the night! One among you is the culprit!\n'\
-                    f"{build_how_to_accuse_message()}"
+                    f'{build_how_to_accuse_message()}'
+                header = Header.MORNING
             elif gameState.state == States.GAME_OVER:
-                return f'<@{target}> is found dead in the morning. '\
+                message = f'<@{target}> is found dead in the morning. '\
                     f'{build_gameover_message(gameState)}'
+                header = Header.GAMEOVER
         else:
-            return 'Hit attempt failed. Either this person does not exist or'\
+            message = 'Hit attempt failed. Either this person does not exist or'\
                 ' they are a member of the mafia and are under protection.'\
                 ' Make sure you are tagging your target with @.'
+            header = Header.ERROR
     elif action == Actions.ACCUSE:
         if actionSuccess and gameState.state == States.TRIAL:
-            return f'The charge against <@{target}> has been seconded by '\
+            message = f'The charge against <@{target}> has been seconded by '\
                 f'<@{executor}>. In accordance with the village by-laws they'\
                 f'now stand before a jury of their peers. The penalty for'\
                 f'guilt is... DEATH. Will you vote guilty or not guilty?\n'\
                 f'{build_how_to_cast_vote_message()}'
+            header = Header.TRIAL
         elif actionSuccess:
-            return f'<@{target}> has been formally accused of being a member'\
+            message = f'<@{target}> has been formally accused of being a member'\
                 f' of the mafia by <@{executor}>. This is a serious '\
                 f'accusation and before they stand trial it must be'\
                 f' seconded!\n{build_how_to_accuse_message()}'
+            header = Header.ACCUSED
         else:
-            return 'Sorry that is not a valid target.'
-    elif action == Actions.GUILTY or Actions.NOT_GUILTY:
+            message = 'Sorry that is not a valid target.'
+            header = Header.ERROR
+    elif action == Actions.GUILTY or action == Actions.NOT_GUILTY:
         if actionSuccess:
             message = f'< @{executor} > casts their ballot. {action}!'
             if gameState.state == States.NIGHT:
                 message += f'<@{gameState.last_accused}> has been found guilty. {identify_player(gameState, gameState.last_accused)} They swing from the gallows as night falls on the village.\n{build_roster_message(gameState)}'
+                header = Header.GUILTY + "\n" + Header.NIGHT
             elif gameState.state == States.GAME_OVER:
                 message += f'<@{gameState.last_accused}> has been found guilty. {identify_player(gameState, gameState.last_accused)} {build_gameover_message(gameState)} '
+                header = Header.GUILTY + "\n" + Header.GAMEOVER
             elif gameState.state == States.DAY:
                 message += f'<@{gameState.last_accused}> has mounted a successful defense and been found not guilty. Someone\'s gonna hang before the day is through. The question is who?'
+                header = Header.INNOCENT
             else:
                 message += f'<@{executor}> casts their ballot. {action}!\nThe current vote is:\n{gameState.voteCount(Actions.GUILTY)} Guilty\n{gameState.voteCount(Actions.NOT_GUILTY)} Not Guilty\n{build_how_to_cast_vote_message()}'
-            return message
+                header = Header.TRIAL
         else:
-            return 'Sorry! You can\'t vote!'
+            message = 'Sorry! You can\'t vote!'
+            header = Header.ERROR
+
+    return message, header

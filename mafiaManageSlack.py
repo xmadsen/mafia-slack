@@ -8,7 +8,10 @@ from stateManagers.gameStateManager import Actions
 from models.player import Roles
 from models.gameState import States as GameStates
 from util.env import getEnvVar
-from util.game_message_builder import get_state_change_message
+from util.constants import Header
+from util.game_message_builder import (
+    get_state_change_message, get_blocks_for_message)
+
 
 
 def getToken(id):
@@ -20,9 +23,9 @@ def getToken(id):
         return result['Item']['token']
 
 
-def processRecords(recordList):
+def processRecords(record_list):
     repo = GameStateRepo()
-    for r in recordList:
+    for r in record_list:
         try:
             body = json.loads(r['body'])
             state = repo._deserializeGame(body['state'])
@@ -32,9 +35,10 @@ def processRecords(recordList):
             sourcePlayer = body['source']
             targetPlayer = body['target']
             mainChannel = state.meta['channel_id']
-            message = get_state_change_message(
+            message, header = get_state_change_message(
                 state, True, action, sourcePlayer, targetPlayer)
-            client.chat_postMessage(channel=mainChannel, text=message)
+            blocks = get_blocks_for_message(message, header)
+            client.chat_postMessage(channel=mainChannel, blocks=blocks)
             if action == Actions.START_GAME:
                 # create a private channel for the mafia
                 mafiaMembers = ','.join(
@@ -57,7 +61,10 @@ def processRecords(recordList):
                 print(f'Inviting {mafiaMembers} to mafia channel')
                 client.conversations_invite(
                     channel=channelId, users=mafiaMembers)
-                client.chat_postMessage(channel=channelId, text='You are members of the local mafia. Rabble-rousers in the village have decided to make a stand against you. It is time you taught them a lesson...\nKill one of them using the command: /mafia kill @who-to-kill\nIf there is more than one member of the mafia you must all /mafia kill the same villager before they will be killed.')
+                message = 'You are members of the local mafia. Rabble-rousers in the village have decided to make a stand against you. It is time you taught them a lesson...\nKill one of them using the command: ```/mafia kill @who-to-kill```\nIf there is more than one member of the mafia you must all ```/mafia kill``` the same villager before they will be killed.'
+                header = Header.MAFIA_ONLY
+                blocks = get_blocks_for_message(message, header)
+                client.chat_postMessage(channel=channelId, blocks=blocks)
                 # store the mafia channel
                 state.meta['mafia_channel'] = channelId
                 repo.UpdateGame(state)

@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from models.player import Roles, States as PlayerStates
 
+
 class Actions:
     START_GAME = 'START_GAME'
     ACCUSE = 'ACCUSE'
@@ -11,8 +12,9 @@ class Actions:
     ADD_PLAYER = 'ADD_PLAYER'
     REMOVE_PLAYER = 'REMOVE_PLAYER'
 
+
 class GameStateManager(ABC):
-    
+
     def __init__(self, gameState):
         self.gameState = gameState
 
@@ -24,11 +26,11 @@ class GameStateManager(ABC):
         print(f'state {self.gameState.state} - {action} - {data} - {executor}')
         oldState = self.gameState.state
         ret = self._transitionFromState(action, data, executor)
-        
+
         if self.gameState.state != oldState:
-            #reset player votes
+            # reset player votes
             for p in self.gameState.players:
-                p.vote=None
+                p.vote = None
         return ret
 
     @abstractmethod
@@ -36,13 +38,16 @@ class GameStateManager(ABC):
         pass
 
     def _isGameOver(self):
-        mafiaCount = len([p for p in self.gameState.findPlayersWithRole(Roles.MAFIA) if p.state == PlayerStates.ALIVE])
-        villagerCount = len([p for p in self.gameState.findPlayersWithRole(Roles.VILLAGER) if p.state == PlayerStates.ALIVE])
-        
+        mafiaCount = len([p for p in self.gameState.findPlayersWithRole(
+            Roles.MAFIA) if p.state == PlayerStates.ALIVE])
+        villagerCount = len([p for p in self.gameState.findPlayersWithRole(
+            Roles.VILLAGER) if p.state == PlayerStates.ALIVE])
+
         return mafiaCount == 0 or villagerCount == mafiaCount
 
     def printGameState(self):
-        playerList = sorted(self.gameState.players,key=lambda player: player.role)
+        playerList = sorted(self.gameState.players,
+                            key=lambda player: player.role)
         print('ROSTER:')
         print('id|role|state')
         for p in playerList:

@@ -1,7 +1,8 @@
+from mafiaUpdateGame import lambda_handler, convert_to_action, get_help_message
 import os
 from unittest.mock import patch, MagicMock
 os.environ['QUEUE_URL'] = 'test_url'
-from mafiaUpdateGame import lambda_handler, convert_to_action, get_help_message
+
 
 def test_ValidRequest_Returns200():
     teamId = 'test'
@@ -10,9 +11,11 @@ def test_ValidRequest_Returns200():
         with patch('mafiaUpdateGame.getInstance') as mockStateManager:
             with patch('mafiaUpdateGame.json.dumps'):
                 with patch('mafiaUpdateGame.boto3'):
-                    result = lambda_handler({"body": f"team_id={teamId}&user_id={userId}&channel_id=channel", "action" : "ADD_PLAYER", "isBase64Encoded": False},None)
-    
+                    result = lambda_handler({"body": f"team_id={teamId}&user_id={userId}&channel_id=channel",
+                                             "action": "ADD_PLAYER", "isBase64Encoded": False}, None)
+
     assert result['statusCode'] == 200
+
 
 def test_SuccessfulRequestWithOptionalArgs_SendsDataToManageSlackQueue():
     teamId = 'test'
@@ -26,12 +29,15 @@ def test_SuccessfulRequestWithOptionalArgs_SendsDataToManageSlackQueue():
                 with patch('mafiaUpdateGame.boto3') as mockboto3:
                     mockAwsClient = mockboto3.client.return_value
                     with patch('mafiaUpdateGame.extract_user_id') as idExtractor:
-                        result = lambda_handler({"body": f"team_id={teamId}&user_id={userId}&text=testTest&channel_id=channel", "action" : action, "isBase64Encoded": False},None)
-                        mockAwsClient.send_message.assert_called_with(QueueUrl = 'test_url', MessageBody=mockJsonDumper.return_value)
-                        mockJsonDumper.assert_any_call({'state':mockState, 'action':action, 'source':userId, 'target' : idExtractor.return_value})
+                        result = lambda_handler(
+                            {"body": f"team_id={teamId}&user_id={userId}&text=testTest&channel_id=channel", "action": action, "isBase64Encoded": False}, None)
+                        mockAwsClient.send_message.assert_called_with(
+                            QueueUrl='test_url', MessageBody=mockJsonDumper.return_value)
+                        mockJsonDumper.assert_any_call(
+                            {'state': mockState, 'action': action, 'source': userId, 'target': idExtractor.return_value})
 
-    
     assert result['statusCode'] == 200
+
 
 def test_SuccessfulRequestWithActionInText_CorrectActionExtracted():
     teamId = 'test'
@@ -45,9 +51,13 @@ def test_SuccessfulRequestWithActionInText_CorrectActionExtracted():
                 with patch('mafiaUpdateGame.boto3') as mockboto3:
                     mockAwsClient = mockboto3.client.return_value
                     with patch('mafiaUpdateGame.extract_user_id') as idExtractor:
-                        result = lambda_handler({"body": f"team_id={teamId}&user_id={userId}&text={action}+testTest&channel_id=channel", "isBase64Encoded": False},None)
-                        mockAwsClient.send_message.assert_called_with(QueueUrl = 'test_url', MessageBody=mockJsonDumper.return_value)
-                        mockJsonDumper.assert_any_call({'state':mockState, 'action':convert_to_action(action.upper()), 'source':userId, 'target' : idExtractor.return_value})
+                        result = lambda_handler(
+                            {"body": f"team_id={teamId}&user_id={userId}&text={action}+testTest&channel_id=channel", "isBase64Encoded": False}, None)
+                        mockAwsClient.send_message.assert_called_with(
+                            QueueUrl='test_url', MessageBody=mockJsonDumper.return_value)
+                        mockJsonDumper.assert_any_call({'state': mockState, 'action': convert_to_action(
+                            action.upper()), 'source': userId, 'target': idExtractor.return_value})
+
 
 def test_help_message():
     teamId = 'test'
@@ -61,6 +71,8 @@ def test_help_message():
                 with patch('mafiaUpdateGame.boto3') as mockboto3:
                     mockAwsClient = mockboto3.client.return_value
                     with patch('mafiaUpdateGame.extract_user_id') as idExtractor:
-                        result = lambda_handler({"body": f"team_id={teamId}&user_id={userId}&text={action}+testTest&channel_id=channel", "isBase64Encoded": False},None)
-                        mockJsonDumper.assert_any_call({'response_type':'ephemeral','text':get_help_message()})
+                        result = lambda_handler(
+                            {"body": f"team_id={teamId}&user_id={userId}&text={action}+testTest&channel_id=channel", "isBase64Encoded": False}, None)
+                        mockJsonDumper.assert_any_call(
+                            {'response_type': 'ephemeral', 'text': get_help_message()})
     assert result['statusCode'] == 200

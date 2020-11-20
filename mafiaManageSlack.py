@@ -10,12 +10,10 @@ from models.gameState import States as GameStates
 from util.env import getEnvVar
 from util.game_message_builder import get_state_change_message
 
-TOKEN_SOURCE = getEnvVar('TOKEN_SOURCE')
-
 
 def getToken(id):
     dynamodb = boto3.resource('dynamodb')
-    tokenStore = dynamodb.Table(TOKEN_SOURCE)
+    tokenStore = dynamodb.Table(getEnvVar('TOKEN_SOURCE'))
     result = tokenStore.get_item(Key={'_id': id})
     print(f'Getting token for {id}')
     if 'Item' in result:

@@ -3,7 +3,7 @@ import os
 import boto3
 from slack import WebClient
 from slack.errors import SlackApiError
-from data_access.dataRepos import GameStateRepo
+from data_access.dataRepos import GameStateRepo, MafiaSerializer
 from stateManagers.gameStateManager import Actions
 from models.player import Roles
 from models.gameState import States as GameStates
@@ -25,10 +25,11 @@ def getToken(id):
 
 def processRecords(record_list):
     repo = GameStateRepo()
+    serializer = MafiaSerializer()
     for r in record_list:
         try:
             body = json.loads(r['body'])
-            state = repo._deserializeGame(body['state'])
+            state = serializer.DeserializeGame(body['state'])
             token = getToken(state.id)
             client = WebClient(token=token)
             action = body['action']

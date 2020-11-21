@@ -3,7 +3,7 @@ import os
 import boto3
 from slack import WebClient
 from slack.errors import SlackApiError
-from data_access.dataRepos import GameStateRepo, MafiaSerializer
+from data_access.dataRepos import MafiaSerializer, GameStateRepo
 from stateManagers.gameStateManager import Actions
 from models.player import Roles
 from models.gameState import States as GameStates
@@ -24,7 +24,6 @@ def getToken(id):
 
 
 def processRecords(record_list):
-    repo = GameStateRepo()
     serializer = MafiaSerializer()
     for r in record_list:
         try:
@@ -68,6 +67,7 @@ def processRecords(record_list):
                 client.chat_postMessage(channel=channelId, blocks=blocks)
                 # store the mafia channel
                 state.meta['mafia_channel'] = channelId
+                repo = GameStateRepo()
                 repo.UpdateGame(state)
             elif state.state == GameStates.GAME_OVER:
                 # clean up the mafia channel and archive it

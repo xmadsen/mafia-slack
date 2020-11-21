@@ -55,16 +55,17 @@ def test_RecordReceived_GenerateMessageAndBroadcastToChannel():
     testTargetId = 'target'
     testMainChannelId = 'testChannel'
     game.meta = {'channel_id': testMainChannelId}
-    with patch('mafiaManageSlack.WebClient') as slackClientConstructor:
-        with patch('mafiaManageSlack.get_state_change_message') as messageBuilder:
-            messageBuilder.return_value = "message","header"
-            with patch('mafiaManageSlack.get_blocks_for_message') as blockBuilder:
-                with patch('mafiaManageSlack.boto3'):
-                    slackClient = slackClientConstructor.return_value
-                    mafiaManageSlack.lambda_handler(createSqsEvent({'state': serializer.SerializeGame(
-                        game), 'action': 'ACTION', 'source': testExecutorId, 'target': testTargetId}), None)
-                    blockBuilder.assert_called_with(messageBuilder.return_value[0],messageBuilder.return_value[1]) #assert the block builder is invoked with message builder output
-                    slackClient.chat_postMessage.assert_called_with(
-                        channel=testMainChannelId, blocks=blockBuilder.return_value) #assert the block builder output is posted to slack
-                    messageBuilder.assert_called_with(
-                        ANY, True, 'ACTION', testExecutorId, testTargetId)
+    with patch('mafiaManageSlack.GameStateRepo'):
+        with patch('mafiaManageSlack.WebClient') as slackClientConstructor:
+            with patch('mafiaManageSlack.get_state_change_message') as messageBuilder:
+                messageBuilder.return_value = "message","header"
+                with patch('mafiaManageSlack.get_blocks_for_message') as blockBuilder:
+                    with patch('mafiaManageSlack.boto3'):
+                        slackClient = slackClientConstructor.return_value
+                        mafiaManageSlack.lambda_handler(createSqsEvent({'state': serializer.SerializeGame(
+                            game), 'action': 'ACTION', 'source': testExecutorId, 'target': testTargetId}), None)
+                        blockBuilder.assert_called_with(messageBuilder.return_value[0],messageBuilder.return_value[1]) #assert the block builder is invoked with message builder output
+                        slackClient.chat_postMessage.assert_called_with(
+                            channel=testMainChannelId, blocks=blockBuilder.return_value) #assert the block builder output is posted to slack
+                        messageBuilder.assert_called_with(
+                            ANY, True, 'ACTION', testExecutorId, testTargetId)

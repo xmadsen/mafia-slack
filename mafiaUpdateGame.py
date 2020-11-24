@@ -1,7 +1,7 @@
 import json
 import os
 import boto3
-from data_access.dataRepos import GameStateRepo
+from data_access.dataRepos import GameStateRepo, MafiaSerializer
 from stateManagers import getInstance, Actions
 from models.player import Roles
 from util.slack_payload_parser import parse_payload, extract_user_id
@@ -52,6 +52,7 @@ def get_help_message():
 def lambda_handler(event, context):
     print(f"Received event:\n{json.dumps(event)}\nWith context:\n{context}")
     gameRepo = GameStateRepo()
+    serializer = MafiaSerializer()
 
     game_id, channel_id, action, player_id, target_id = extractParameters(
         event)
@@ -93,7 +94,7 @@ def lambda_handler(event, context):
             action, executor=player_id, data=target_id)
         response_type = 'ephemeral'
         if success:
-            updateSlack(gameRepo._serializeGame(gameState),
+            updateSlack(serializer.SerializeGame(gameState),
                         action, player_id, target_id)
             response_text = 'Got it!'
         else:

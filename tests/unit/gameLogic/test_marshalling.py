@@ -32,7 +32,7 @@ def test_GameStateMarshallingWithoutEnoughPlayers_GameStartAction_StateIsMarshal
 
 def test_GameStateMarshallingWithEnoughPlayers_GameStartAction_PlayersAssignedRoles():
     num_players = random.randint(4, 10)
-    expected_mafia = num_players//3
+    expected_mafia = num_players // 3
     expected_villagers = num_players - expected_mafia
     state = Game()
     state.state = GameStates.MARSHALLING

@@ -3,6 +3,7 @@ from models.gameState import Game, States
 from models.player import Player
 from util.env import getEnvVar
 
+
 class MafiaSerializer(object):
     def SerializeGame(self, game):
         return {
@@ -39,6 +40,7 @@ class MafiaSerializer(object):
         p.vote = player['vote']
         return p
 
+
 class GameStateRepo(object):
     def __init__(self, dynamo_endpoint=None):
         dynamodb = boto3.resource('dynamodb')
@@ -65,6 +67,5 @@ class GameStateRepo(object):
         return newGameState
 
     def UpdateGame(self, gameState):
-        return self.table.put_item(Item=self.serializer.SerializeGame(gameState))
-
-    
+        return self.table.put_item(
+            Item=self.serializer.SerializeGame(gameState))

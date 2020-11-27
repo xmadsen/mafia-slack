@@ -3,15 +3,15 @@ from models.player import Roles
 from models.player import States as PlayerStates
 from models.gameState import States
 from util.constants import Emoji, Header
+from util.messagetext import MessageText as txt
 
 
 def identify_player(gameState, id):
     player = gameState.findPlayerWithId(id)
     if player.role == Roles.MAFIA:
-        return 'Justice prevails! A member of the mafia has been rooted out.'
+        return txt.KILLED_MAFIA
     if player.role == Roles.VILLAGER:
-        return 'In truth, they were no criminal. An innocent villager has '\
-            'been killed.'
+        return txt.KILLED_VILLAGER
 
 
 def get_blocks_for_message(message, header):
@@ -37,12 +37,9 @@ def get_blocks_for_message(message, header):
 
 def build_gameover_message(gameState):
     if gameState.determineWinner() == Roles.VILLAGER:
-        message = 'The villagers have shown bravery and determination in'\
-            ' their resistance to organized crime. The mafia will think twice'\
-            ' before trying again. GAME OVER. The villagers win.'
+        message = txt.VILLAGERS_WIN
     else:
-        message = 'The mafia has made an example of this village. No longer '\
-            'will they resist the criminal empire. GAME OVER. The mafia wins.'
+        message = txt.MAFIA_WINS
     return message + '\n' + build_roster_message(gameState, True)
 
 
@@ -67,19 +64,19 @@ def build_roster_message(gameState, isGameOver=False):
 
 
 def build_how_to_cast_vote_message():
-    return 'To vote guilty: ```/mafia vote-guilty```\nTo vote not guilty: '\
-        '```/mafia vote-innocent```'
+    return txt.HOW_TO_VOTE
 
 
 def build_how_to_accuse_message():
-    return 'To accuse or second an accusation: ```/mafia accuse @who-to-accuse```'
+    return txt.HOW_TO_ACCUSE
 
 
 def get_state_change_message(gameState, actionSuccess, action, executor=None,
                              target=None):
     if action == Actions.ADD_PLAYER:
         if actionSuccess:
-            message = f'<@{executor}> has joined the game! {len(gameState.players)} players have joined!'
+            message = txt.ADD_PLAYER_SUCCESS.substitute(
+                executor=executor, num_players=len(gameState.players))
             header = Header.SETUP
         elif executor in [p.id for p in gameState.players]:
             message = "You can't join if you're already in."

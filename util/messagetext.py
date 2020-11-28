@@ -94,3 +94,32 @@ class MessageText:
     )
 
     CANNOT_VOTE = 'Sorry! You can\'t vote!'
+
+    MAFIA_TEAM_INTRO = 'You are members of the local mafia. Rabble-rousers in'\
+        'the village have decided to make a stand against you. It is time you'\
+        ' taught them a lesson...\nKill one of them using the command: '\
+        '```/ mafia kill @ who-to-kill```\nIf there is more than one member '\
+        'of the mafia you must all ```/ mafia kill``` the same villager '\
+        'before they will be killed.'
+
+    GAME_EXISTS = 'Game already exists.'
+    NEW_GAME_TEXT = 'A new game of mafia is about to start. type '\
+        '```/ mafia join``` to get in on the action.'
+
+    HELP_MESSAGE = (
+        'Welcome to mafia slack bot! Valid commands are:\n'
+        '```/mafia new``` - create a new game\n'
+        '```/mafia join``` - join a game that has not yet started\n'
+        '```/mafia leave``` - leave a game that has not yet started\n'
+        '```/mafia start``` - starts the game\n'
+        '```/mafia kill [@who]``` - kill the target player (only valid '
+        'during the night phase by the mafia)\n'
+        '```/mafia accuse [@who]``` - accuse the target player of being in '
+        'the mafia\n'
+        '```/mafia vote-guilty``` - vote the accused and on trial player '
+        'guilty of being in the mafia\n'
+        '```/mafia vote-innocent``` - vote the accused and on trial player'
+        ' innocent of being in the mafia\n'
+    )
+
+    TEST_MESSAGE_TEXT = "Test creating a new message"

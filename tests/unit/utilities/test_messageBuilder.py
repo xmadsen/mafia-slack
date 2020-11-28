@@ -2,6 +2,7 @@ from util.game_message_builder import (
     get_blocks_for_message, get_state_change_message,
     build_roster_message, build_how_to_accuse_message)
 from util.constants import Header
+from util.messagetext import MessageText as txt
 from stateManagers.gameStateManager import Actions
 from models.gameState import Game, States
 from models.player import Player, Roles
@@ -129,14 +130,14 @@ def test_RosterNotGameOver():
 
 
 def test_GetBlocksReturnsHeaderBlock():
-    message = "Test creating a new message"
+    message = txt.TEST_MESSAGE_TEXT
     header = "Mafia Test Header"
     blocks = get_blocks_for_message(message, header)
     assert blocks[0]['type'] == 'header'
 
 
 def test_GetBlocksReturnsHeaderBlockWithHeaderMessage():
-    message = "Test creating a new message"
+    message = txt.TEST_MESSAGE_TEXT
     header = "Mafia Test Header"
     blocks = get_blocks_for_message(message, header)
     assert blocks[0]['text']['text'] == header

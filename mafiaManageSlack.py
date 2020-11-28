@@ -11,7 +11,7 @@ from util.env import getEnvVar
 from util.constants import Header
 from util.game_message_builder import (
     get_state_change_message, get_blocks_for_message)
-
+from util.messagetext import MessageText as txt
 
 
 def getToken(id):
@@ -61,7 +61,7 @@ def processRecords(record_list):
                 print(f'Inviting {mafiaMembers} to mafia channel')
                 client.conversations_invite(
                     channel=channelId, users=mafiaMembers)
-                message = 'You are members of the local mafia. Rabble-rousers in the village have decided to make a stand against you. It is time you taught them a lesson...\nKill one of them using the command: ```/mafia kill @who-to-kill```\nIf there is more than one member of the mafia you must all ```/mafia kill``` the same villager before they will be killed.'
+                message = txt.MAFIA_TEAM_INTRO
                 header = Header.MAFIA_ONLY
                 blocks = get_blocks_for_message(message, header)
                 client.chat_postMessage(channel=channelId, blocks=blocks)
@@ -76,7 +76,7 @@ def processRecords(record_list):
                     print(f'kicking {player_id} from mafia channel')
                     client.conversations_kick(
                         channel=mafia_channel, user=player_id)
-                    
+
                 print(f'archiving channel {mafia_channel}')
                 client.conversations_archive(channel=mafia_channel)
         except SlackApiError as e:

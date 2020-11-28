@@ -1,4 +1,5 @@
-from mafiaUpdateGame import lambda_handler, convert_to_action, get_help_message
+from mafiaUpdateGame import lambda_handler, convert_to_action
+from util.messagetext import MessageText as txt
 import os
 from unittest.mock import patch, MagicMock
 os.environ['QUEUE_URL'] = 'test_url'
@@ -76,5 +77,5 @@ def test_help_message():
                         result = lambda_handler(
                             {"body": f"team_id={teamId}&user_id={userId}&text={action}+testTest&channel_id=channel", "isBase64Encoded": False}, None)
                         mockJsonDumper.assert_any_call(
-                            {'response_type': 'ephemeral', 'text': get_help_message()})
+                            {'response_type': 'ephemeral', 'text': txt.HELP_MESSAGE})
     assert result['statusCode'] == 200

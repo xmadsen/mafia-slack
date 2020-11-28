@@ -7,6 +7,7 @@ from models.player import Roles
 from util.slack_payload_parser import parse_payload, extract_user_id
 from util.game_message_builder import get_state_change_message
 from util.env import getEnvVar
+from util.messagetext import MessageText as txt
 
 HELP = 'help'
 NEW_GAME = 'new'
@@ -24,8 +25,10 @@ action_table = {
 
 def updateSlack(state, action, executor, target):
     client = boto3.client('sqs')
-    client.send_message(QueueUrl=getEnvVar('QUEUE_URL'), MessageBody=json.dumps(
-        {'state': state, 'action': action, 'source': executor, 'target': target}))
+    client.send_message(QueueUrl=getEnvVar('QUEUE_URL'),
+                        MessageBody=json.dumps(
+        {'state': state, 'action': action, 'source': executor,
+         'target': target}))
 
 
 def convert_to_action(arg):
@@ -33,20 +36,6 @@ def convert_to_action(arg):
         return action_table[arg]
     else:
         return HELP
-
-
-def get_help_message():
-    return '\n'.join([
-        'Welcome to mafia slack bot! Valid commands are:',
-        '```/mafia new``` - create a new game',
-        '```/mafia join``` - join a game that has not yet started',
-        '```/mafia leave``` - leave a game that has not yet started',
-        '```/mafia start``` - starts the game',
-        '```/mafia kill [@who]``` - kill the target player (only valid during the night phase by the mafia)',
-        '```/mafia accuse [@who]``` - accuse the target player of being in the mafia',
-        '```/mafia vote-guilty``` - vote the accused and on trial player guilty of being in the mafia',
-        '```/mafia vote-innocent``` - vote the accused and on trial player innocent of being in the mafia',
-    ])
 
 
 def lambda_handler(event, context):
@@ -62,7 +51,7 @@ def lambda_handler(event, context):
             'headers': {},
             'body': json.dumps({
                 'response_type': 'ephemeral',
-                'text': get_help_message()
+                'text': txt.HELP_MESSAGE
             }),
             'isBase64Encoded': False
         }
@@ -70,11 +59,10 @@ def lambda_handler(event, context):
         state = gameRepo.CreateNewGame(game_id, {'channel_id': channel_id})
         if state == None:
             response_type = 'ephemeral'
-            message = json.dumps('Game already exists.')
+            message = json.dumps(txt.GAME_EXISTS)
         else:
             response_type = 'in_channel'
-            message = json.dumps(
-                'A new game of mafia is about to start. type ```/mafia join``` to get in on the action.')
+            message = json.dumps(txt.NEW_GAME_TEXT)
         response = {
             'statusCode': 200,
             'headers': {},

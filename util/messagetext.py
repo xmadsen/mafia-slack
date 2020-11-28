@@ -86,3 +86,11 @@ class MessageText:
          ' guilty. Someone\'s gonna hang before the day is through. The '
          'question is who?')
     )
+
+    VOTED_STILL_IN_PROGRESS = Template(
+        ('<@${executor}> casts their ballot. ${action}!\nThe current vote is:'
+         '\n${guiltyvotes} Guilty\n${innocentvotes} Not Guilty\n'
+         '${howtovotemessage}')
+    )
+
+    CANNOT_VOTE = 'Sorry! You can\'t vote!'

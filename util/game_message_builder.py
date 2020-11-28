@@ -167,10 +167,16 @@ def get_state_change_message(gameState, actionSuccess, action, executor=None,
                 )
                 header = Header.INNOCENT
             else:
-                message += f'<@{executor}> casts their ballot. {action}!\nThe current vote is:\n{gameState.voteCount(Actions.GUILTY)} Guilty\n{gameState.voteCount(Actions.NOT_GUILTY)} Not Guilty\n{build_how_to_cast_vote_message()}'
+                message += txt.VOTED_STILL_IN_PROGRESS.substitute(
+                    executor=executor,
+                    action=action,
+                    guiltyvotes=gameState.voteCount(Actions.GUILTY),
+                    innocentvotes=gameState.voteCount(Actions.NOT_GUILTY),
+                    howtovotemessage=build_how_to_cast_vote_message()
+                )
                 header = Header.TRIAL
         else:
-            message = 'Sorry! You can\'t vote!'
+            message = txt.CANNOT_VOTE
             header = Header.ERROR
 
     return message, header

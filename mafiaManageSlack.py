@@ -13,7 +13,6 @@ from util.game_message_builder import (
     get_state_change_message, get_blocks_for_message)
 
 
-
 def getToken(id):
     dynamodb = boto3.resource('dynamodb')
     tokenStore = dynamodb.Table(getEnvVar('TOKEN_SOURCE'))
@@ -72,11 +71,12 @@ def processRecords(record_list):
             elif state.state == GameStates.GAME_OVER:
                 # clean up the mafia channel and archive it
                 mafia_channel = state.meta['mafia_channel']
-                for player_id in [p.id for p in state.players if p.role == Roles.MAFIA]:
+                for player_id in [
+                        p.id for p in state.players if p.role == Roles.MAFIA]:
                     print(f'kicking {player_id} from mafia channel')
                     client.conversations_kick(
                         channel=mafia_channel, user=player_id)
-                    
+
                 print(f'archiving channel {mafia_channel}')
                 client.conversations_archive(channel=mafia_channel)
         except SlackApiError as e:

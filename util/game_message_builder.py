@@ -143,7 +143,7 @@ def get_state_change_message(gameState, actionSuccess, action, executor=None,
             header = Header.ERROR
     elif action == Actions.GUILTY or action == Actions.NOT_GUILTY:
         if actionSuccess:
-            message = f'< @{executor} > casts their ballot. {action}!'
+            message = f'<@{executor}> casts their ballot. {action}!\n'
             if gameState.state == States.NIGHT:
                 message += f'<@{gameState.last_accused}> has been found guilty. {identify_player(gameState, gameState.last_accused)} They swing from the gallows as night falls on the village.\n{build_roster_message(gameState)}'
                 header = Header.GUILTY + "\n" + Header.NIGHT
@@ -154,7 +154,7 @@ def get_state_change_message(gameState, actionSuccess, action, executor=None,
                 message += f'<@{gameState.last_accused}> has mounted a successful defense and been found not guilty. Someone\'s gonna hang before the day is through. The question is who?'
                 header = Header.INNOCENT
             else:
-                message += f'<@{executor}> casts their ballot. {action}!\nThe current vote is:\n{gameState.voteCount(Actions.GUILTY)} Guilty\n{gameState.voteCount(Actions.NOT_GUILTY)} Not Guilty\n{build_how_to_cast_vote_message()}'
+                message += f'The current vote is:\n{gameState.voteCount(Actions.GUILTY)} Guilty\n{gameState.voteCount(Actions.NOT_GUILTY)} Not Guilty\n{build_how_to_cast_vote_message()}'
                 header = Header.TRIAL
         else:
             message = 'Sorry! You can\'t vote!'

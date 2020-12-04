@@ -13,6 +13,7 @@ from util.game_message_builder import (
     get_state_change_message, get_blocks_for_message)
 from util.messagetext import MessageText as txt
 
+
 def getToken(id):
     dynamodb = boto3.resource('dynamodb')
     tokenStore = dynamodb.Table(getEnvVar('TOKEN_SOURCE'))

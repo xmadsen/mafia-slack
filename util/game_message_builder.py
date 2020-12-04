@@ -145,6 +145,7 @@ def get_state_change_message(gameState, actionSuccess, action, executor=None,
                 executor=executor,
                 action=action
             )
+            message = f'<@{executor}> casts their ballot. {action}!\n'
             if gameState.state == States.NIGHT:
                 message += txt.VOTED_GUILTY.substitute(
                     guilty=gameState.last_accused,

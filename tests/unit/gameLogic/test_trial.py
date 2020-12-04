@@ -77,7 +77,7 @@ def test_CanNotCastVoteIfDead():
     state.players = [mafia, villager1, villager2]
 
     systemUnderTest.transition(Actions.GUILTY, executor='v2')
-    assert villager2.vote == None
+    assert villager2.vote is None
 
 
 def test_CanNotCastVoteIfOnTrial():
@@ -91,4 +91,4 @@ def test_CanNotCastVoteIfOnTrial():
     state.players = [mafia, villager1, villager2]
 
     systemUnderTest.transition(Actions.GUILTY, executor=mafia.id)
-    assert mafia.vote == None
+    assert mafia.vote is None
